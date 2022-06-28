@@ -433,14 +433,14 @@ border-radius:15;</string>
      <property name="font">
       <font>
        <family>Bahnschrift SemiBold SemiConden</family>
-       <pointsize>15</pointsize>
+       <pointsize>14</pointsize>
        <weight>7</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 63 15pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
+      <string notr="true">font: 63 14pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Opcode Item&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -538,7 +538,7 @@ border-radius:15;</string>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 63 15pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
+      <string notr="true">font: 63 14pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;API Item&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -636,7 +636,7 @@ border-radius:15;</string>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 63 15pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
+      <string notr="true">font: 63 14pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Machine Learning&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Evaluation&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
