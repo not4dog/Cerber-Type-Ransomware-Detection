@@ -1,0 +1,21 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>minimize.png</file>
+    <file>exit.png</file>
+    <file>githubwhite.png</file>
+    <file>githubblack.png</file>
+    <file>shutdown.png</file>
+    <file>person.png</file>
+    <file>menu.png</file>
+    <file>menu.png</file>
+    <file>plus.png</file>
+    <file>arrow.png</file>
+    <file>opcode.png</file>
+    <file>opcode.png</file>
+    <file>opcode.png</file>
+    <file>api.png</file>
+    <file>machine-learning.png</file>
+    <file>hongik.png</file>
+    <file>plus.png</file>
+  </qresource>
+</RCC>
