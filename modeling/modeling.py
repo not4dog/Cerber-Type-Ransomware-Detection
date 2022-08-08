@@ -6,6 +6,7 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 
 
+# 분류알고리즘 : svc, rf
 class Classifiers():
 
     def __init__(self, X, Y):
@@ -22,20 +23,27 @@ class Classifiers():
         def do_randomforest(self, mode):
             clf = RandomForestClassifier()
             clf.fit(self.x_train, self.y_train)
-
+            
             if mode == 1:
                 return clf.feature_importances_
 
             y_pred = clf.predict(self.x_test)
             return accuracy_score(self.y_test, y_pred)
+        
+        def do_naivebayes(self):
+            clf = GaussianNB()
+            clf.fit(self.x_train, self.y_train)
+            y_pred = clf.predict(self.x_test)
 
-# 모델링 시작
+		return accuracy_score(self.y_test, y_pred)
+
+# 탐지률 저장부분 
 def do_all(self):
-
-
+    
     rns = []
 
     rns.append(self.do_svm())
     rns.append(self.do_randomforest(0))
+    rns.append(self.do_naivebayes())
 
     return rns
