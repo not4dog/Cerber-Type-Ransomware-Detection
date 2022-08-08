@@ -6,7 +6,7 @@ from sklearn.svm import SVC
 from sklearn.naive_bayes import GaussianNB
 
 
-# 분류알고리즘 : svc, rf
+# 분류알고리즘 : SVC, RF, NB
 class Classifiers():
 
     def __init__(self, X, Y):
