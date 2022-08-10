@@ -13,6 +13,7 @@ from sklearn.preprocessing import StandardScaler
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
 
 
 # Optuna 파라미터 최적화
