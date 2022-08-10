@@ -6,7 +6,6 @@ import webbrowser
 import os
 
 def resource_path(relative_path):
-    """ Get absolute path to resource, works for dev and for PyInstaller """
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
     return os.path.join(base_path, relative_path)
 
@@ -18,15 +17,16 @@ class MyWindow(QMainWindow, form_class):
         super().__init__()
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setupUi(self)
-        self.Run.clicked.connect(self.FileOpen)
+        self.Run.clicked.connect(self.ChooseFileAndExtract)
         self.shutdown.clicked.connect(QApplication.instance().quit)
         self.minimize.clicked.connect(self.hideWindow)
         self.github.clicked.connect(lambda: webbrowser.open('https://github.com/not4dog/GP-RansomwareDetection'))
 
-    def FileOpen(self):
+    def ChooseFileAndExtract(self):
         global filename
-        filename = QFileDialog.getOpenFileName(self, 'Open File', '','Executable File (*.exe)')
-    
+        filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)')
+        os.system('objdump -d -j .text {0} > File_Opcode_Extract.txt' .format(filename[0]))
+
     def hideWindow(self):
         self.showMinimized()
 
