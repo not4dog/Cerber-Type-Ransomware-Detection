@@ -448,16 +448,16 @@ border-radius:15;</string>
     <widget class="QLabel" name="exelabel">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>0</x>
        <y>160</y>
-       <width>111</width>
-       <height>61</height>
+       <width>170</width>
+       <height>80</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
-       <width>111</width>
-       <height>61</height>
+       <width>170</width>
+       <height>80</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -479,7 +479,7 @@ border-radius:15;</string>
       <string notr="true">font: 63 14pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Opcode Item&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Opcode Item&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Frequency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -555,16 +555,16 @@ border-radius:15;</string>
     <widget class="QLabel" name="apilabel">
      <property name="geometry">
       <rect>
-       <x>30</x>
+       <x>0</x>
        <y>160</y>
-       <width>111</width>
-       <height>61</height>
+       <width>170</width>
+       <height>80</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
-       <width>111</width>
-       <height>61</height>
+       <width>170</width>
+       <height>80</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -577,7 +577,7 @@ border-radius:15;</string>
       <string notr="true">font: 63 14pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;API Item&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Frequency&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;API Item&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Frequency&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -653,16 +653,16 @@ border-radius:15;</string>
     <widget class="QLabel" name="mllabel">
      <property name="geometry">
       <rect>
-       <x>10</x>
+       <x>0</x>
        <y>160</y>
-       <width>151</width>
-       <height>61</height>
+       <width>170</width>
+       <height>80</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
-       <width>151</width>
-       <height>61</height>
+       <width>170</width>
+       <height>80</height>
       </size>
      </property>
      <property name="maximumSize">
@@ -675,7 +675,7 @@ border-radius:15;</string>
       <string notr="true">font: 63 14pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Machine Learning&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Evaluation&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Machine Learning&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Evaluation&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
