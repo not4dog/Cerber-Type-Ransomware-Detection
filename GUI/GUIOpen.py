@@ -1,3 +1,4 @@
+from msilib.schema import CheckBox
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -5,6 +6,8 @@ from PyQt5.QtCore import *
 import webbrowser
 from time import *
 import os
+import hashlib
+import pandas as pd
 from PyQt5 import QtCore
 from PyQt5 import QtGui
 
@@ -21,7 +24,7 @@ class Thread(QThread):
         super(Thread, self).__init__()
     
     def run(self):
-        for i in range(100):
+        for i in range(101):
             sleep(2)
             self._signal.emit(i)
         
@@ -30,7 +33,7 @@ class MyWindow(QMainWindow, form_class):
         super().__init__()
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setupUi(self)
-        self.Run.clicked.connect(self.ChooseFileAndExtract)
+        self.Run.clicked.connect(self.OpcodeExtract)
         self.Run.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.shutdown.clicked.connect(QApplication.instance().quit)
         self.minimize.clicked.connect(self.hideWindow)
@@ -44,18 +47,33 @@ class MyWindow(QMainWindow, form_class):
 
     def signal_accept(self, msg):
         self.progressBar.setValue(int(msg))
-        if self.progressBar.value() == 99:
+        if self.progressBar.value() == 100:
             self.progressBar.setValue(0)
             self.msg_box()
+    
+    def msg_box(self):
+        msg = QMessageBox()                      
+        msg.information(msg,'Notice','Executable File Analysis is Complete.\n\nPlease Check the Report Folder.')
 
     def hideWindow(self):
         self.showMinimized()
+    
+    def CheckSHA256(self):
+        global sha256
+        hash_sha256 = hashlib.sha256()
+        with open(filename[0], "rb") as f:
+            chunk = f.read(4096)
+            while chunk:
+                hash_sha256.update(chunk)
+                chunk = f.read(4096)
+        sha256 = hash_sha256.hexdigest()
 
-    def msg_box(self):
-        msg = QMessageBox()                      
-        msg.information(msg,'Notice','Executable File Analysis is Complete.\nPlease Check the Report Folder.')                               
+    def CountOpcode(self, item):
+        file = open("File_Opcode_Extract.txt", "r")
+        read_data = file.read()
+        word_count = read_data.lower().count(item)
 
-    def ChooseFileAndExtract(self):
+    def OpcodeExtract(self):
         global filename
         filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)')
         if filename[0] !='' :
@@ -66,7 +84,19 @@ class MyWindow(QMainWindow, form_class):
             msgBox = QMessageBox() 
             msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
             msgBox.warning(msgBox,'Warning','Please Select a Executable File.')
-            self.ChooseFileAndExtract()
+
+        push = self.CountOpcode("push")
+        mov = self.CountOpcode("mov")
+        call = self.CountOpcode("call")
+        sub = self.CountOpcode("sub")
+        jmp = self.CountOpcode("jmp")
+        add = self.CountOpcode("add")
+        cmp = self.CountOpcode("cmp")
+        test = self.CountOpcode("test")
+        lea = self.CountOpcode("lea")
+        pop = self.CountOpcode("pop")
+        self.CheckSHA256()
+       
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
