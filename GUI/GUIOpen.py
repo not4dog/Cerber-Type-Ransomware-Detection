@@ -1,4 +1,3 @@
-from msilib.schema import CheckBox
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
@@ -7,9 +6,9 @@ import webbrowser
 from time import *
 import os
 import hashlib
-import pandas as pd
 from PyQt5 import QtCore
 from PyQt5 import QtGui
+import csv
 
 def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -33,12 +32,16 @@ class MyWindow(QMainWindow, form_class):
         super().__init__()
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setupUi(self)
-        self.Run.clicked.connect(self.OpcodeExtract)
+        self.Run.clicked.connect(self.OpcodeExtractToCSV)
         self.Run.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.shutdown.clicked.connect(QApplication.instance().quit)
         self.minimize.clicked.connect(self.hideWindow)
         self.github.clicked.connect(lambda: webbrowser.open('https://github.com/not4dog/Cerber-Type-Ransomware-Detection'))
+        self.hongiklogo.clicked.connect(lambda: webbrowser.open('https://sejong.hongik.ac.kr/index.do'))
         self.github.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.hongiklogo.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.minimize.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
+        self.shutdown.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
     def pBar(self):
         self.thread = Thread()
@@ -53,7 +56,7 @@ class MyWindow(QMainWindow, form_class):
     
     def msg_box(self):
         msg = QMessageBox()                      
-        msg.information(msg,'Notice','Executable File Analysis is Complete.\n\nPlease Check the Report Folder.')
+        msg.information(msg,'Notice','Executable File Analysis is Complete.\n\nPlease Check the Detection_Report Folder.')
 
     def hideWindow(self):
         self.showMinimized()
@@ -72,31 +75,36 @@ class MyWindow(QMainWindow, form_class):
         file = open("File_Opcode_Extract.txt", "r")
         read_data = file.read()
         word_count = read_data.lower().count(item)
+        return word_count
 
-    def OpcodeExtract(self):
+    def OpcodeExtractToCSV(self):
         global filename
-        filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)')
+        filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)')  
+
         if filename[0] !='' :
             self.pBar()
             os.system('objdump -d -j .text {0} > File_Opcode_Extract.txt' .format(filename[0]))
-            
+            push = self.CountOpcode("push")
+            mov = self.CountOpcode("mov")
+            call = self.CountOpcode("call")
+            sub = self.CountOpcode("sub")
+            jmp = self.CountOpcode("jmp")
+            add = self.CountOpcode("add")
+            cmp = self.CountOpcode("cmp")
+            test = self.CountOpcode("test")
+            lea = self.CountOpcode("lea")
+            pop = self.CountOpcode("pop")
+            self.CheckSHA256()
+
+            f = open('Opcode_Item_Frequency.csv','w', newline='')
+            wr = csv.writer(f)
+            wr.writerow([sha256, push, mov, call, sub, jmp, add, cmp, test, lea, pop,])
+            f.close()
+
         else :
             msgBox = QMessageBox() 
             msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
-            msgBox.warning(msgBox,'Warning','Please Select a Executable File.')
-
-        push = self.CountOpcode("push")
-        mov = self.CountOpcode("mov")
-        call = self.CountOpcode("call")
-        sub = self.CountOpcode("sub")
-        jmp = self.CountOpcode("jmp")
-        add = self.CountOpcode("add")
-        cmp = self.CountOpcode("cmp")
-        test = self.CountOpcode("test")
-        lea = self.CountOpcode("lea")
-        pop = self.CountOpcode("pop")
-        self.CheckSHA256()
-       
+            msgBox.warning(msgBox,'Warning','Please Select a Executable File.')  
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
