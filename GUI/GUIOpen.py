@@ -35,7 +35,7 @@ class MyWindow(QMainWindow, form_class):
         self.setupUi(self)
         self.DataFolderCreate()
         self.ReportFolderCreate()
-        self.Run.clicked.connect(self.OpcodeExtractToCSV)
+        self.Run.clicked.connect(self.Main)
         self.Run.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.shutdown.clicked.connect(QApplication.instance().quit)
         self.minimize.clicked.connect(self.hideWindow)
@@ -69,19 +69,6 @@ class MyWindow(QMainWindow, form_class):
             self.progressBar.setValue(0)
             self.msg_box()
 
-    def ExamineType(self):
-        with open(filename[0], 'rb') as f:
-            signature1 = f.read(4)
-            signature2 = signature1
-    
-        if signature1 == b'MZ\x90\x00' or signature2 == b'MZP\x00' :
-            pass
-
-        else :
-            msgBox = QMessageBox() 
-            msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
-            msgBox.warning(msgBox,'Warning','선택한 파일은 실행파일이 아닙니다.\n\n올바른 실행파일을 선택해 주시기 바랍니다.')
-
     def msg_box(self):
         msg = QMessageBox()                      
         msg.information(msg,'Notice','실행파일 분석이 완료되었습니다.\n\nDetection_Report 폴더에서 탐지 결과를 확인해 주시기 바랍니다.')
@@ -105,12 +92,24 @@ class MyWindow(QMainWindow, form_class):
         word_count = read_data.lower().count(item)
         return word_count
 
-    def OpcodeExtractToCSV(self):
+    def Main(self):
         global filename
-        filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)')  
+        filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)') 
 
         if filename[0] !='' :
-            self.ExamineType()
+            with open(filename[0], 'rb') as f:
+                signature1 = f.read(4)
+                signature2 = signature1
+    
+            if signature1 == b'MZ\x90\x00' or signature2 == b'MZP\x00' :
+               pass
+
+            else :
+               msgBox = QMessageBox() 
+               msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
+               msgBox.warning(msgBox,'Warning','선택한 파일은 실행파일이 아닙니다.\n\n올바른 실행파일을 선택해 주시기 바랍니다.')
+               return
+
             self.pBar()
             os.system('objdump -d -j .text {0} > Detection_Feature_Data\File_Opcode_Extract.txt' .format(filename[0]))
             push = self.CountOpcode("push")
@@ -134,6 +133,7 @@ class MyWindow(QMainWindow, form_class):
             msgBox = QMessageBox() 
             msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
             msgBox.warning(msgBox,'Warning','분석할 파일이 선택되지 않았습니다.\n\n파일을 선택해 주시기 바랍니다.')
+            return
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
