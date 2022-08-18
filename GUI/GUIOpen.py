@@ -1,4 +1,5 @@
 import sys
+from xml.dom.minidom import parseString
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
 from PyQt5.QtCore import *
@@ -32,6 +33,8 @@ class MyWindow(QMainWindow, form_class):
         super().__init__()
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setupUi(self)
+        self.DataFolderCreate()
+        self.ReportFolderCreate()
         self.Run.clicked.connect(self.OpcodeExtractToCSV)
         self.Run.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.shutdown.clicked.connect(QApplication.instance().quit)
@@ -48,15 +51,40 @@ class MyWindow(QMainWindow, form_class):
         self.thread._signal.connect(self.signal_accept)
         self.thread.start()
 
+    def DataFolderCreate(self):
+        dir_path = "Detection_Feature_Data"
+        if os.path.isdir(dir_path) != True :
+            os.system('mkdir Detection_Feature_Data')
+        else : pass
+
+    def ReportFolderCreate(self):
+        dir_path = "Detection_Report"
+        if os.path.isdir(dir_path) != True :
+            os.system('mkdir Detection_Report')
+        else : pass
+
     def signal_accept(self, msg):
         self.progressBar.setValue(int(msg))
         if self.progressBar.value() == 100:
             self.progressBar.setValue(0)
             self.msg_box()
+
+    def ExamineType(self):
+        with open(filename[0], 'rb') as f:
+            signature1 = f.read(4)
+            signature2 = signature1
     
+        if signature1 == b'MZ\x90\x00' or signature2 == b'MZP\x00' :
+            pass
+
+        else :
+            msgBox = QMessageBox() 
+            msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
+            msgBox.warning(msgBox,'Warning','선택한 파일은 실행파일이 아닙니다.\n\n올바른 실행파일을 선택해 주시기 바랍니다.')
+
     def msg_box(self):
         msg = QMessageBox()                      
-        msg.information(msg,'Notice','Executable File Analysis is Complete.\n\nPlease Check the Detection_Report Folder.')
+        msg.information(msg,'Notice','실행파일 분석이 완료되었습니다.\n\nDetection_Report 폴더에서 탐지 결과를 확인해 주시기 바랍니다.')
 
     def hideWindow(self):
         self.showMinimized()
@@ -72,7 +100,7 @@ class MyWindow(QMainWindow, form_class):
         sha256 = hash_sha256.hexdigest()
 
     def CountOpcode(self, item):
-        file = open("File_Opcode_Extract.txt", "r")
+        file = open("Detection_Feature_Data\File_Opcode_Extract.txt", "r")
         read_data = file.read()
         word_count = read_data.lower().count(item)
         return word_count
@@ -82,8 +110,9 @@ class MyWindow(QMainWindow, form_class):
         filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)')  
 
         if filename[0] !='' :
+            self.ExamineType()
             self.pBar()
-            os.system('objdump -d -j .text {0} > File_Opcode_Extract.txt' .format(filename[0]))
+            os.system('objdump -d -j .text {0} > Detection_Feature_Data\File_Opcode_Extract.txt' .format(filename[0]))
             push = self.CountOpcode("push")
             mov = self.CountOpcode("mov")
             call = self.CountOpcode("call")
@@ -96,7 +125,7 @@ class MyWindow(QMainWindow, form_class):
             pop = self.CountOpcode("pop")
             self.CheckSHA256()
 
-            f = open('Opcode_Item_Frequency.csv','w', newline='')
+            f = open('Detection_Feature_Data\Opcode_Item_Frequency.csv','w', newline='')
             wr = csv.writer(f)
             wr.writerow([sha256, push, mov, call, sub, jmp, add, cmp, test, lea, pop,])
             f.close()
@@ -104,7 +133,7 @@ class MyWindow(QMainWindow, form_class):
         else :
             msgBox = QMessageBox() 
             msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
-            msgBox.warning(msgBox,'Warning','Please Select a Executable File.')  
+            msgBox.warning(msgBox,'Warning','분석할 파일이 선택되지 않았습니다.\n\n파일을 선택해 주시기 바랍니다.')
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
