@@ -1,10 +1,10 @@
 <RCC>
   <qresource prefix="icons">
+    <file>restart.png</file>
     <file>minimize.png</file>
     <file>exit.png</file>
     <file>githubwhite.png</file>
     <file>githubblack.png</file>
-    <file>shutdown.png</file>
     <file>person.png</file>
     <file>menu.png</file>
     <file>menu.png</file>

@@ -3,7 +3,8 @@ data = [('GUI.ui', '.'),
       ('resources_rc.py', '.'),
       ('muxcrt.dll', '.'),
       ('objdump.exe', '.'),
-      ('phxcrt.dll', '.')]
+      ('phxcrt.dll', '.'),
+      ('icon.ico', '.')]
 
 
 block_cipher = None
@@ -46,4 +47,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon='icon.ico'
 )

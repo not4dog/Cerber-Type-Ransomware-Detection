@@ -9,6 +9,7 @@ import os
 import hashlib
 from PyQt5 import QtCore
 from PyQt5 import QtGui
+from PyQt5.QtGui import QIcon
 import csv
 
 def resource_path(relative_path):
@@ -31,8 +32,11 @@ class Thread(QThread):
 class MyWindow(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
+        self.setWindowTitle('CTRD')
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setupUi(self)
+        self.Initial.clicked.connect(self.InitialMethod)
+        self.Initial.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.DataFolderCreate()
         self.ReportFolderCreate()
         self.Run.clicked.connect(self.Main)
@@ -46,6 +50,16 @@ class MyWindow(QMainWindow, form_class):
         self.minimize.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.shutdown.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
+    def InitialMethod(self):
+        msgbox = QMessageBox()
+        msgbox.setStyleSheet('QMessageBox {color:black; background:white;}')
+        ret = msgbox.question(msgbox,'Question', '초기화 시 기존 분석자료와 탐지 결과가 영구적으로 삭제됩니다.\n\n그래도 초기화 하시겠습니까?', msgbox.Yes | msgbox.No)
+        if ret == msgbox.Yes:
+           QtCore.QCoreApplication.quit()
+           QtCore.QProcess.startDetached(sys.executable, sys.argv)
+           os.system('rmdir /s /q Detection_Feature_Data & rmdir /s /q Detection_Report')
+        else : return
+
     def pBar(self):
         self.thread = Thread()
         self.thread._signal.connect(self.signal_accept)
@@ -55,13 +69,13 @@ class MyWindow(QMainWindow, form_class):
         dir_path = "Detection_Feature_Data"
         if os.path.isdir(dir_path) != True :
             os.system('mkdir Detection_Feature_Data')
-        else : pass
+        else : return
 
     def ReportFolderCreate(self):
         dir_path = "Detection_Report"
         if os.path.isdir(dir_path) != True :
             os.system('mkdir Detection_Report')
-        else : pass
+        else : return
 
     def signal_accept(self, msg):
         self.progressBar.setValue(int(msg))
@@ -72,6 +86,7 @@ class MyWindow(QMainWindow, form_class):
     def msg_box(self):
         msg = QMessageBox()                      
         msg.information(msg,'Notice','실행파일 분석이 완료되었습니다.\n\nDetection_Report 폴더에서 탐지 결과를 확인해 주시기 바랍니다.')
+        self.Run.setDisabled(False)
 
     def hideWindow(self):
         self.showMinimized()
@@ -85,6 +100,25 @@ class MyWindow(QMainWindow, form_class):
                 hash_sha256.update(chunk)
                 chunk = f.read(4096)
         sha256 = hash_sha256.hexdigest()
+
+    def ExtractOpcode(self) :
+        os.system('objdump -d -j .text {0} > Detection_Feature_Data\File_Opcode_Extract.txt' .format(filename[0]))
+        push = self.CountOpcode("push")
+        mov = self.CountOpcode("mov")
+        call = self.CountOpcode("call")
+        sub = self.CountOpcode("sub")
+        jmp = self.CountOpcode("jmp")
+        add = self.CountOpcode("add")
+        cmp = self.CountOpcode("cmp")
+        test = self.CountOpcode("test")
+        lea = self.CountOpcode("lea")
+        pop = self.CountOpcode("pop")
+        self.CheckSHA256()
+
+        f = open('Detection_Feature_Data\Opcode_Item_Frequency.csv','w', newline='')
+        wr = csv.writer(f)
+        wr.writerow([sha256, push, mov, call, sub, jmp, add, cmp, test, lea, pop,])
+        f.close()
 
     def CountOpcode(self, item):
         file = open("Detection_Feature_Data\File_Opcode_Extract.txt", "r")
@@ -108,35 +142,21 @@ class MyWindow(QMainWindow, form_class):
                msgBox = QMessageBox() 
                msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
                msgBox.warning(msgBox,'Warning','선택한 파일은 실행파일이 아닙니다.\n\n올바른 실행파일을 선택해 주시기 바랍니다.')
-               return
-
+               return(print('실행파일이 아닌 파일 선택으로 인한 메인함수 중단'))
+               
+            self.Run.setDisabled(True)
             self.pBar()
-            os.system('objdump -d -j .text {0} > Detection_Feature_Data\File_Opcode_Extract.txt' .format(filename[0]))
-            push = self.CountOpcode("push")
-            mov = self.CountOpcode("mov")
-            call = self.CountOpcode("call")
-            sub = self.CountOpcode("sub")
-            jmp = self.CountOpcode("jmp")
-            add = self.CountOpcode("add")
-            cmp = self.CountOpcode("cmp")
-            test = self.CountOpcode("test")
-            lea = self.CountOpcode("lea")
-            pop = self.CountOpcode("pop")
-            self.CheckSHA256()
-
-            f = open('Detection_Feature_Data\Opcode_Item_Frequency.csv','w', newline='')
-            wr = csv.writer(f)
-            wr.writerow([sha256, push, mov, call, sub, jmp, add, cmp, test, lea, pop,])
-            f.close()
+            self.ExtractOpcode()
 
         else :
             msgBox = QMessageBox() 
             msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
-            msgBox.warning(msgBox,'Warning','분석할 파일이 선택되지 않았습니다.\n\n파일을 선택해 주시기 바랍니다.')
-            return
+            msgBox.warning(msgBox,'Warning','분석 대상 파일이 선택되지 않았습니다.\n\n파일을 선택해 주시기 바랍니다.')
+            return(print('파일 미 선택으로 인한 메인함수 중단'))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon('icon.ico'))
     myWindow = MyWindow()
     myWindow.show()
     app.exec_()
