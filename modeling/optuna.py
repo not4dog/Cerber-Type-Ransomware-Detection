@@ -8,9 +8,11 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import os,joblib,optuna
+import os
+import sys
+import joblib,pickle
+import optuna
 import itertools
-import pickle
 
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import make_scorer, accuracy_score, precision_score, recall_score, f1_score
@@ -33,44 +35,43 @@ class RandomForestCF(ModelType):
     """
     Train the RandomForest model from the vectorized features
     """
-    def __init__(self, datadir, rows, dim):
+    def __init__(self, datadir):
         self.datadir = datadir
-        self.rows = rows
-        self.dim = dim
         self.model = None
 
     # RandomForest
     def train(self):
-        """
-        Train
-        """
-        x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
+
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
         sc = StandardScaler()
         x_train = sc.fit_transform(x_train)
         x_test = sc.transform(x_test)
 
-        self.model = RandomForestClassifier(n_estimators=100,
-                                            min_samples_leaf=25,
-                                            max_features=0.5,
-                                            n_jobs=-1,
-                                            oob_score=False)
+        def optuna_rf(trial):
+            param = {
+                "n_estimators": trial.suggest_int("n_estimators", 100, 1000),
+                "max_features": trial.suggest_categorical("max_features", ["auto", "sqrt"]),
+                "max_depth": trial.suggest_int("max_depth", 2, 100),
+                "min_samples_split": trial.suggest_int("min_samples_split", 2, 10),
+                "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 5),
+            }
 
-        # 파라미터 튜닝 : https://injo.tistory.com/30 참조
+            classifier_obj = RandomForestClassifier(param)
+
+            score = cross_val_score(classifier_obj, x_train, y_train, n_jobs=-1, cv=10)
+            accuracy = score.mean()
+            return accuracy
 
         # train, Prediction
         self.model.fit(x_train, y_train)
         y_pred = self.model.predict(x_test)
 
         # Accuracy
-        from sklearn.metrics import accuracy_score
         accuracy = accuracy_score(y_pred, y_test)
         print("RandomForest : ", accuracy)
 
     def save(self):
-        """
-        Save a model using a pickle package
-        """
         print('[RandomForest] start save')
         # logger.debug(self.model)
         if self.model:
@@ -79,39 +80,56 @@ class RandomForestCF(ModelType):
             # load_model.predict(X)
             # logger.debug('[RandomForest] finish save')
 
+class SVM(ModelType):
+    def __init__(self, datadir):
+        self.datadir = datadir
+        self.model = None
 
-# Optuna 파라미터 최적화
-def objective(trial):
+    def train(self):
 
-    classifier_name = trial.suggest_categorical('classifier', ['SVC', 'RF'])
+        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
-    ## 분류기에 따라 다르게 하이퍼 파라미터를 지정, if-else문 이용
-    if classifier_name == 'SVC':
-        svc_c = trial.suggest_float("C", 1e-10, 1e10, log=True)
-        classifier_obj = SVC(C=svc_c, gamma="auto")
+        sc = StandardScaler()
+        x_train = sc.fit_transform(x_train)
+        x_test = sc.transform(x_test)
 
-    else:
-        max_depth = trial.suggest_int("max_depth", 2, 32, log=True),
-        n_estimators = trial.suggest_int('n_estimators', 100, 1000),
-        max_features = trial.suggest_categorical("max_features", ["auto", "sqrt"]),
+        def optuna_svm(trial):
+            param = {
+                "C": trial.suggest_float("C", 1e-10, 1e10, log=True)
+            }
 
-        classifier_obj = RandomForestClassifier(max_depth = max_depth, n_estimators= n_estimators, max_features = max_features)
+            classifier_obj = SVC(C=param, gamma="auto")
 
-    score = cross_val_score(classifier_obj, X_train, Y_train, n_jobs=-1, cv=10)
-    accuracy = score.mean()
-    return accuracy
+            # train, Prediction
+            self.model.fit(x_train, y_train)
+            y_pred = self.model.predict(x_test)
 
+            # Accuracy
+            accuracy = accuracy_score(y_pred, y_test)
+            print("RandomForest : ", accuracy)
+
+    def save(self):
+        print('[SVM] start save')
+        # logger.debug(self.model)
+        if self.model:
+            joblib.dump(self.model, os.path.join(self.datadir, 'SVM.txt'))
+            # load_model = joblib.load('RandomForest_model.txt') #predict method ,
+            # load_model.predict(X)
+                # logger.debug('[RandomForest] finish save')
 
 
 if __name__ == "__main__":
+    study_svm = optuna.create_study(direction="maximize")
+    study_svm.optimize(optuna_svm, n_trials=100)
 
-    study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=100)
+    study_rf = optuna.create_study()
+    study_rf.optimize(optuna_rf, n_trials=100)
 
-    print("Number of finished trials: {}".format(len(study.trials)))
+    print("Number of finished trials: {}".format(len(study_rf.trials)))
+    print("Number of finished trials: {}".format(len(study_svm.trials)))
 
     print("Best trial:")
-    trial = study.best_trial
+    trial = study_rf.best_trial, study_svm.best_trial
 
     print("  Value: {}".format(trial.value))
 
