@@ -9,3 +9,17 @@
 조원 : 현동엽(B789071)
 
 조원 : 구영인(B989106)
+
+
+< Reference >
+
+[ PyQt5 Tutorial - 파이썬으로 만드는 나만의 GUI 프로그램 ]
+https://wikidocs.net/21920
+https://wikidocs.net/119616
+
+[Pyqt5 완전정복 시리즈]
+https://wikidocs.net/160723
+
+
+[Optuna]
+https://optuna.readthedocs.io/en/stable/reference/index.html
