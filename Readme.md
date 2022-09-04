@@ -22,4 +22,14 @@ https://wikidocs.net/160723
 
 
 [Optuna]
-https://optuna.readthedocs.io/en/stable/reference/index.html
+공식 홈페이지 : https://optuna.readthedocs.io/en/stable/reference/index.html
+
+< kaggle >
+https://www.kaggle.com/dixhom/bayesian-optimization-with-optuna-stacking
+https://www.kaggle.com/code/dixhom/bayesian-optimization-with-optuna-stacking/notebook
+
+< dacon >
+# https://dacon.io/codeshare/4646
+# https://dacon.io/competitions/official/235840/codeshare/3834
+
+melpin :  https://github.com/melpin/capstone_design_project_2
