@@ -35,6 +35,7 @@ https://dacon.io/codeshare/4646
 https://dacon.io/competitions/official/235840/codeshare/3834
 
 
-< 비슷한 유형의 프로잭트 >
+< Project >
 melpin :  https://github.com/melpin/capstone_design_project_2
+
 securycore : https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Detection
