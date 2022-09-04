@@ -39,3 +39,6 @@ https://dacon.io/competitions/official/235840/codeshare/3834
 melpin :  https://github.com/melpin/capstone_design_project_2
 
 securycore : https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Detection
+
+Malware-Detection-using-PEfiles : 
+https://github.com/eo4929/Malware-Detection-using-PEfiles/tree/82e7e9fc65894b4efd7976d6be0f8622bff38333
