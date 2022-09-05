@@ -35,12 +35,14 @@ https://dacon.io/codeshare/4646
 https://dacon.io/competitions/official/235840/codeshare/3834
 
 
-< 참고한 Project >
-melpin :  https://github.com/melpin/capstone_design_project_2
+< 참고하고 있는 Project >
+melpin
+https://github.com/melpin/capstone_design_project_2
 
-securycore : https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Detection
+securycore
+https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Detection
 
-Malware-Detection-using-PEfiles : 
+Malware-Detection-using-PEfiles 
 https://github.com/eo4929/Malware-Detection-using-PEfiles/tree/82e7e9fc65894b4efd7976d6be0f8622bff38333
 
 AI_based_Malware_Detection
@@ -48,5 +50,3 @@ https://github.com/3ltigr0/AI_based_Malware_Detection/tree/07020eda1df0b36787cac
 
 Maleware Detection using Opcode Sequence
 https://github.com/sunung007/malware-detection/tree/409a1ce7173be6c7a777e0728cde2b005d5d9e0e
-
-
