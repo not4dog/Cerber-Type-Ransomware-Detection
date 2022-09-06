@@ -1,16 +1,10 @@
-# 참고사이트
-
-# https://github.com/melpin/capstone_design_project_2/blob/master/optuna.py
-# https://dacon.io/codeshare/4646
-# https://dacon.io/competitions/official/235840/codeshare/3834
-
 # 라이브러리 정리 모음
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import sys
-import joblib,pickle
+import joblib
 import optuna
 import itertools
 

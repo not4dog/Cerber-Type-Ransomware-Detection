@@ -12,6 +12,9 @@ scikit-learn = "*"
 pyqt5 = "*"
 pyqt5-stubs = "==5.15.6.0"
 pyqt5designer = "==5.14.1"
+seaborn = "*"
+optuna = "*"
+htmlparser = "*"
 
 [dev-packages]
 
