@@ -50,3 +50,10 @@ https://github.com/3ltigr0/AI_based_Malware_Detection/tree/07020eda1df0b36787cac
 
 Maleware Detection using Opcode Sequence
 https://github.com/sunung007/malware-detection/tree/409a1ce7173be6c7a777e0728cde2b005d5d9e0e
+
+
+< Pycaret >
+https://minimin2.tistory.com/137
+
+https://velog.io/@ezoo0422/Python-pycaret%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EB%AA%A8%EB%8D%B8-%EC%84%A0%EC%A0%95%ED%95%98%EA%B8%B0
+
