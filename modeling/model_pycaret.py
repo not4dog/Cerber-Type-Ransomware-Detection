@@ -31,7 +31,6 @@ class SingleModelMaker:
     def __init__(self):
         self.raw_data = None
         self.pd_data = None
-
         self.data = None # labeled data
 
         self.X_train=None
@@ -46,14 +45,14 @@ class SingleModelMaker:
         cerber = pd.read_csv("cerber_frequency.csv")
         df = pd.concat([bengin, cerber])
         self.raw_data = df
-        self.pd_data_list = cleaned_data
+        self.pd_data = cleaned_data # standardized data 활용
 
 
     def prepare_labeled_data(self):
         col_label = self.raw_data['family']
-
-        df_each_scaled_data = pd.DataFrame(self.pd_data)
-        res = pd.concat([df_each_scaled_data, col_label],axis=1)
+        df_pd_data = pd.DataFrame(self.pd_data)
+        print(df_pd_data)
+        res = pd.concat([df_pd_data, col_label],axis=1)
 
         shuffled_res = shuffle(res)
         self.data = shuffled_res
@@ -75,9 +74,9 @@ class SingleModelMaker:
         print('- - - - - - - - - - - - - - - - ')
 
         training_data = pd.concat([self.X_train, self.y_train], axis=1)
-        # print(training_data)
+        print(training_data)
 
-        s = setup(training_data, target='family', train_size=0.7, fold_strategy='stratifiedkfold', fix_imbalance=True)
+        s = setup(training_data, target='family', train_size=0.7, fold_strategy='stratifiedkfold')
 
         rf = create_model(estimator='rf', fold=10, probability_threshold=0.5)
 
@@ -93,7 +92,21 @@ class SingleModelMaker:
         print(tuned_rf)
         print()
 
-        stacker = stack_models([rf, tuned_rf],meta_model=None, method='auto', choose_better=True, optimize='F1',probability_threshold=0.5)
+        rbfsvm = create_model(estimator='rbfsvm', fold=10, probability_threshold=0.5)
+
+        print('rbfsvm: ')
+        print()
+        print(rbfsvm)
+        print()
+
+        tuned_rbfsvm = tune_model(rbfsvm, n_iter=10, optimize='F1', search_library='optuna', search_algorithm='random', choose_better=True)
+
+        print('tuned_rbfsvm: ')
+        print()
+        print(tuned_rbfsvm)
+        print()
+
+        stacker = stack_models([tuned_rf, tuned_rbfsvm],meta_model=None, method='auto', fold = 10, choose_better=True, optimize='Accuracy',probability_threshold=0.5)
 
         print('stacker: ')
         print()
@@ -115,6 +128,8 @@ class SingleModelMaker:
 
         prediction_result = predict_model(self.final_model, data=self.X_test)
 
+        eval_Accuracy = check_metric(self.y_test, prediction_result['Label'], metric='Accuracy')
+        print('F1: ', eval_Accuracy)
         eval_f1 = check_metric( self.y_test, prediction_result['Label'] ,metric='F1')
         print('F1: ', eval_f1)
         eval_prec = check_metric(self.y_test, prediction_result['Label'], metric='Precision')
@@ -129,7 +144,7 @@ class SingleModelMaker:
         print('final 모델 저장')
         print('- - - - - - - - - - - - - - - - ')
 
-
+        save_model(self.final_model, "final model")
 
 
 
@@ -150,6 +165,7 @@ if __name__ == "__main__":
     models.split_data()
     models.prepare_model()
     models.predict_and_evaluate()
+    models.savemodel()
 
 
 

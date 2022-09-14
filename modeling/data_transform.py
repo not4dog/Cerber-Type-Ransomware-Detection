@@ -92,7 +92,7 @@ class DataPreprocessor:
 
     def put_cleaned_data_list(self):
         print('[다양한 방식으로 re-scaling 된 데이터 리스트 반환]')
-        print()
+        # print(self.pd_scaled_data_list)
         return self.pd_scaled_data_list
 
     def make_scaled_data(self):
@@ -102,6 +102,8 @@ class DataPreprocessor:
         self.pd_scaled_data = standard.transform(self.pd_data)
 
     def put_cleaned_data(self):
+        print('[standard scaler 데이터 리스트 반환]')
+        print()
         return self.pd_scaled_data
 
 if __name__ == '__main__':
@@ -115,6 +117,7 @@ if __name__ == '__main__':
 
     data_preprocessor.make_scaled_data_list()
     data_list = data_preprocessor.put_cleaned_data_list()
+    print(data_list)
     data_preprocessor.make_scaled_data()
     data = data_preprocessor.put_cleaned_data()
     print(data)
