@@ -26,9 +26,6 @@ class ModelType(object):
 
 
 class RandomForestCF(ModelType):
-    """
-    Train the RandomForest model from the vectorized features
-    """
     def __init__(self, datadir):
         self.datadir = datadir
         self.model = None
@@ -36,11 +33,6 @@ class RandomForestCF(ModelType):
     # RandomForest
     def train(self):
 
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
-
-        sc = StandardScaler()
-        x_train = sc.fit_transform(x_train)
-        x_test = sc.transform(x_test)
 
         def optuna_rf(trial):
             param = {
@@ -130,8 +122,3 @@ if __name__ == "__main__":
     print("  Params: ")
     for key, value in trial.params.items():
         print("    {}: {}".format(key, value))
-
-
-
-    
-

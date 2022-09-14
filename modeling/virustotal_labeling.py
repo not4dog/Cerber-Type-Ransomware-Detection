@@ -8,8 +8,9 @@ import hashlib
 
 _md5 = '[a-z0-9]{32}'
 
-# 랜섬웨어, 정상파일 폴더를 만들고 연습용 실행파일
+# 랜섬웨어, 정상파일 폴더를 만들고 연습용 실행파일 폴더 설정
 path_dir = './bengin'
+# path_dir = './modeling/cerber'
 file_list = os.listdir(path_dir)
 
 md5_pattern = re.compile(_md5)
