@@ -73,5 +73,7 @@ https://velog.io/@ezoo0422/Python-pycaret%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%E
 
 공식홈페이지 : https://www.nurilab.com/kr/products/kicomav.html
 
+https://nurilab.github.io/2020/04/01/kicomav_guide/
+
 https://s3ich4n.tistory.com/29
 
