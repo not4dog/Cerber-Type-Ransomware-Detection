@@ -21,6 +21,11 @@ https://wikidocs.net/119616
 https://wikidocs.net/160723
 
 
+< Cuckoo Sandbox 관련 > 
+API : https://cuckoo.readthedocs.io/en/latest/usage/api/
+
+Cuckoo Web UI사용 및 Django 연동 : https://kkamagistory.tistory.com/578
+
 [Optuna]
 공식 홈페이지 : https://optuna.readthedocs.io/en/stable/reference/index.html
 
