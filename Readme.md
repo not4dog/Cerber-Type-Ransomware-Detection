@@ -68,3 +68,10 @@ https://minimin2.tistory.com/137
 
 https://velog.io/@ezoo0422/Python-pycaret%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EB%AA%A8%EB%8D%B8-%EC%84%A0%EC%A0%95%ED%95%98%EA%B8%B0
 
+
+< Kicom AV >
+
+공식홈페이지 : https://www.nurilab.com/kr/products/kicomav.html
+
+https://s3ich4n.tistory.com/29
+
