@@ -11,6 +11,7 @@ import os
 import sys
 import joblib
 import itertools
+import optuna
 
 from sklearn.utils import shuffle
 
@@ -32,44 +33,37 @@ class ModelMaker:
 
         self.final_model= None
 
-    def load_data(self, cleaned_data):
+    def load_data(self):
         bengin = pd.read_csv("bengin_frequency.csv")
         cerber = pd.read_csv("cerber_frequency.csv")
         df = pd.concat([bengin, cerber])
         self.raw_data = df
 
-        return self.raw_data
-
     def remove_unnecessary_features(self):
         self.pd_data = self.raw_data.drop(['SHA-256'], axis=1)
 
-        return self.pd_data
     def split_data(self):
             X = self.pd_data.drop('family', axis=1)
             y = self.pd_data['family']
 
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+            x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 
-            self.X_train = X_train
-            self.X_test = X_test
+            self.X_train = x_train
+            self.X_test = x_test
             self.y_train = y_train
             self.y_test = y_test
 
-            scaler = StandardScaler()
-            scaler.fit(self.X_train)
-
-            self.X_train = scaler.transform(X_train)
-            self.X_test = scaler.transform(X_test)
 
     def prepare_model(self):
         print('- - - - - - - - - - - - - - - - ')
-        print('rescaled data 를 통해 모델 구축 시작')
+        print('모델 구축 시작')
         print('- - - - - - - - - - - - - - - - ')
+
 
         training_data = pd.concat([self.X_train, self.y_train], axis=1)
         print(training_data)
 
-        s = setup(training_data, target='family', train_size=0.7, fold_strategy='stratifiedkfold')
+        exp_clf = setup(data = training_data, target='family', session_id = 42)
 
         rf = create_model(estimator='rf', fold=10, probability_threshold=0.5)
 
@@ -92,7 +86,7 @@ class ModelMaker:
         print(rbfsvm)
         print()
 
-        tuned_rbfsvm = tune_model(rbfsvm, n_iter=10, optimize='F1', search_library='optuna', search_algorithm='random', choose_better=True)
+        tuned_rbfsvm = tune_model(rbfsvm, n_iter=50, optimize='F1', search_library='optuna', search_algorithm='random', choose_better=True)
 
         print('tuned_rbfsvm: ')
         print()
@@ -122,7 +116,7 @@ class ModelMaker:
         prediction_result = predict_model(self.final_model, data=self.X_test)
 
         eval_Accuracy = check_metric(self.y_test, prediction_result['Label'], metric='Accuracy')
-        print('AccuracyZZ: ', eval_Accuracy)
+        print('Accuracy: ', eval_Accuracy)
         eval_f1 = check_metric( self.y_test, prediction_result['Label'] ,metric='F1')
         print('F1: ', eval_f1)
         eval_prec = check_metric(self.y_test, prediction_result['Label'], metric='Precision')
@@ -132,12 +126,22 @@ class ModelMaker:
 
         print()
         print()
-    def savemodel(self):
+    def save_model(self):
         print('- - - - - - - - - - - - - - - - ')
         print('final 모델 저장')
         print('- - - - - - - - - - - - - - - - ')
 
         save_model(self.final_model, "final model")
+
+
+if __name__ == "__main__":
+    models = ModelMaker()
+    models.load_data()
+    models.remove_unnecessary_features()
+    models.split_data()
+    models.prepare_model()
+    models.predict_and_evaluate()
+    models.savemodel()
 
 
 

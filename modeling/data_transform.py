@@ -19,14 +19,9 @@ class DataPreprocessor:
         df = pd.concat([bengin, cerber])
         self.raw_data = df
 
-        return self.raw_data
-
-
     # 불필요한 특징 제거
     def remove_unnecessary_features(self):
         self.pd_data = self.raw_data.drop(['SHA-256'], axis = 1)
-
-        return self.pd_data
 
     def remove_incorrect_data(self):
         # 1) 레이블이 NaN을 포함한 row 제외
@@ -37,30 +32,19 @@ class DataPreprocessor:
             self.pd_data = self.pd_data.dropna(subset=["family"])
 
         print('[NaN data들 제거]')
-        print(self.pd_data)
+        # print(self.pd_data)
         print()
 
-    # def remove_no_frequency(self):
-    # # 2) 빈도수가 0인 부분 제외
-    #     mask = self.pd_data['push' or 'mov' or 'call' or 'sub' or 'jmp' or 'add' or 'cmp' or 'test' or 'lea' or 'pop' or 'FindFirstFile' or 'SearchPathW' or 'SetFilePointer' or 'FindResourceEx' or 'GetFileAttributesW' or 'SetFileAttributesW' or 'SetFilePointerEx' or 'CryptEncrypt' or 'CreateThread' or 'FindResourceExW'].isin([0])
-    #     if mask:
-    #         print("빈도수가 0인 부분 제외")
-    #         self.pd_data = self.pd_data.dropna(subset=["family"])
-    #
-    #     print('[빈도수가 0인 부분 제외]')
-    #     print(self.pd_data)
-    #     print()
-
     def address_missing_value(self):
-        # 3) missing value(결측값)에 대해 imputation(대체) 하기
-        imputer = SimpleImputer() # 어떻게 imputation 할지는 데이터 특성에 따라 갈린다고 함 ( 기본값 : 평균 설정 )
-        # 예를 들어, 시계열데이터의 경우, interpolation으로 impute해서, 결측치 처리함
+        # 2) missing value(결측값)를 중간값으로 imputation(대체) 하기
+        imputer = SimpleImputer(missing_values=np.NaN, strategy="median")
+        check_imputer = imputer.fit.transform(self.pd_data)
 
-        check_NaN = self.pd_data.isnull().any().any()
-        print('결측치가 존재여부: ', check_NaN)
+        print('결측치가 존재여부: ', check_imputer)
 
     def remove_outlier_based_std(self):
         for i in range(0, len(self.pd_data.iloc[1])):
+            # 3) Nan에 대해 0으로 대체
             self.pd_data.iloc[:, i] = self.pd_data.iloc[:, i].replace(0, np.NaN)  # optional
             self.pd_data = self.pd_data[~(np.abs(self.pd_data.iloc[:, i] - self.pd_data.iloc[:, i].mean()) > (3 * self.pd_data.iloc[:, i].std()))].fillna(0)
 
@@ -103,22 +87,20 @@ class DataPreprocessor:
         self.pd_scaled_data = standard.transform(self.pd_data)
 
     def put_cleaned_data(self):
-        print('[standard scaler 데이터 리스트 반환]')
+        print('[스케일링 된 데이터 반환]')
+        print(self.pd_scaled_data)
         print()
         return self.pd_scaled_data
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     data_preprocessor = DataPreprocessor()
     data_preprocessor.load_raw_data()
     data_preprocessor.remove_unnecessary_features()
     data_preprocessor.remove_incorrect_data()
-    #data_preprocessor.remove_no_frequency()
     data_preprocessor.address_missing_value()
 
-
-    data_preprocessor.make_scaled_data_list()
-    data_list = data_preprocessor.put_cleaned_data_list()
-    print(data_list)
     data_preprocessor.make_scaled_data()
     data = data_preprocessor.put_cleaned_data()
-    print(data)
+
+
