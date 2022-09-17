@@ -5,11 +5,13 @@ import matplotlib.pyplot as plt
 
 import os
 import sys
-from sklearn.externals import joblib
+import joblib,pickle
 import optuna
 import itertools
 
 from data_transform import DataPreprocessor
+
+from sklearn.pipeline import make_pipeline
 
 
 from sklearn.model_selection import train_test_split, cross_val_score
@@ -20,9 +22,8 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 from sklearn.svm import SVC
 from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import RandomForestClassifier,StackingClassifier
+from sklearn.ensemble import RandomForestClassifier,AdaBoostClassifier,StackingClassifier
 
 
 class FinalModel:
@@ -43,14 +44,21 @@ class FinalModel:
 
             self.m_strModels = ['Logisitic Regression', 'Random Forest', 'Decision Tree', 'Svm', 'Naive Bayes']
 
-    def GetModels(self):
-        return self.m_models
 
-    def GetXTest(self):
-        return self.X_test
+    def objective_LR(self, trial):
+        param_lr = {
+            "C" : trial.suggest_loguniform("C", 1e-5, 1e5),
+            "solver" : trial.suggest_categorical("solver", ("lbfgs", "saga")),
+            "max_iter" : trial.suggest_int("max_iter", 4000, 4000)
+        }
 
-    def GetYTest(self):
-        return self.Y_test
+        pipe = make_pipeline(StandardScaler(), LogisticRegression(**param_lr))
+
+        pipe.fit(self.X_train, self.Y_train)
+
+        return pipe.score(self.X_test, self.Y_test)
+
+
 
     def objective_rf(self,trial):
             param_rf = {
@@ -79,10 +87,10 @@ class FinalModel:
         accuracy = score.mean()
         return accuracy
 
-    def objective_dt(self, trial):
-        param_dt = {
 
-        }
+    def ApplyLogisticRegression(self,showSteps):
+        if showSteps is True:
+            print('Starting logistic regression optimization.')
 
 
 
@@ -143,7 +151,7 @@ class FinalModel:
         kernel = trial.params["kernel"]
 
         svc = SVC(C=C, kernel=kernel, probability=True)
-        svc.fit(self.m_x_train, self.m_y_train)
+        svc.fit(self.X_train, self.y_train)
 
         if showSteps is True:
             print('Svm optimized.')
@@ -171,8 +179,13 @@ class FinalModel:
         sc = StackingClassifier(estimators=self.m_models, final_estimator=LogisticRegression(max_iter=4000))
         sc.fit(self.X_train, self.y_train)
 
-        xTestPredictions = sc.predict(self.m_x_test)
-        print(f'Accuracy score of stacking classifier:\n{accuracy_score(self.m_y_test, xTestPredictions)}')
+        xTestPredictions = sc.predict(self.X_test)
+        print(f'Accuracy score of stacking classifier:\n{accuracy_score(self.y_test, xTestPredictions)}')
+
+
+
+if __name__ == '__main__':
+
 
 
 
