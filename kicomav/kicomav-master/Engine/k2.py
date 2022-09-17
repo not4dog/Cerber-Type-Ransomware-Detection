@@ -12,12 +12,12 @@ import xml.etree.cElementTree as ET
 import json
 import email
 
-# try:
-#     from backports import lzma
-#     import yara
-#     import py7zlib
-# except ImportError:
-#     pass
+try:
+    from backports import lzma
+    import yara
+    import py7zlib
+except ImportError:
+    pass
 
 # -------------------------------------------------------------------------
 # 실제 임포트 모듈
@@ -253,10 +253,10 @@ def print_k2logo():
 Copyright (C) 1995-%s Kei Choi. All rights reserved.
 '''
 
-    print ('------------------------------------------------------------')
+    print '------------------------------------------------------------'
     s = logo % (sys.platform.upper(), KAV_VERSION, KAV_BUILDDATE, KAV_LASTYEAR)
     cprint(s, FOREGROUND_CYAN | FOREGROUND_INTENSITY)
-    print ('------------------------------------------------------------')
+    print '------------------------------------------------------------'
 
 
 # -------------------------------------------------------------------------
@@ -378,10 +378,10 @@ def parser_options():
             (options, args) = parser.parse_args()
             if len(args) == 0:
                 return options, None
-        except OptionParsingError as e:  # 잘못된 옵션 사용일 경우
-            print ('ERROR')
+        except OptionParsingError, e:  # 잘못된 옵션 사용일 경우
+            # print 'ERROR'
             return 'ILLEGAL_OPTION', e.msg
-        except OptionParsingExit as e:
+        except OptionParsingExit, e:
             return 'ILLEGAL_OPTION', e.msg
 
         return options, args
@@ -392,7 +392,7 @@ def parser_options():
 # 백신의 사용법을 출력한다
 # -------------------------------------------------------------------------
 def print_usage():
-    print ('\nUsage: k2.py path[s] [options]')
+    print '\nUsage: k2.py path[s] [options]'
 
 
 # -------------------------------------------------------------------------
@@ -423,7 +423,7 @@ def print_options():
         -?,  --help            this help
                                * = default option'''
 
-    print (options_string)
+    print options_string
 
 
 # -------------------------------------------------------------------------
@@ -592,7 +592,7 @@ def chek_need_update(file, hash):
 # -------------------------------------------------------------------------
 def listvirus_callback(plugin_name, vnames):
     for vname in vnames:
-        print ('%-50s [%s.kmd]' % (vname, plugin_name))
+        print '%-50s [%s.kmd]' % (vname, plugin_name)
 
 
 # -------------------------------------------------------------------------
@@ -774,7 +774,7 @@ def scan_callback(ret_value):
             log_print(msg)
 
             ch = getch().lower()
-            print (ch)
+            print ch
             log_print(ch + '\n')
 
             if ret_value['scan_state'] == kernel.INFECTED and ch == 'd':
@@ -983,7 +983,7 @@ def main():
         return 0
     elif options == 'ILLEGAL_OPTION':  # 정의되지 않은 옵션을 사용한 경우
         print_usage()
-        print ('Error: %s' % args)  # 에러 메시지가 담겨 있음
+        print 'Error: %s' % args  # 에러 메시지가 담겨 있음
         return 0
 
     # 프로그램이 실행중인 폴더

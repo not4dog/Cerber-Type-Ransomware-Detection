@@ -9,6 +9,7 @@ class DataPreprocessor:
         self.raw_data = None
         self.pd_data = None
         self.pd_scaled_data = None
+
         self.pd_scaled_data_list = []
         self.load_raw_data()
 
@@ -18,10 +19,14 @@ class DataPreprocessor:
         df = pd.concat([bengin, cerber])
         self.raw_data = df
 
+        return self.raw_data
+
 
     # 불필요한 특징 제거
     def remove_unnecessary_features(self):
         self.pd_data = self.raw_data.drop(['SHA-256'], axis = 1)
+
+        return self.pd_data
 
     def remove_incorrect_data(self):
         # 1) 레이블이 NaN을 포함한 row 제외
@@ -53,10 +58,6 @@ class DataPreprocessor:
 
         check_NaN = self.pd_data.isnull().any().any()
         print('결측치가 존재여부: ', check_NaN)
-
-    def show_data_profile(self):
-        pr = self.pd_data.profile_report()
-        print("데이터 프로필 : ", pr)
 
     def remove_outlier_based_std(self):
         for i in range(0, len(self.pd_data.iloc[1])):

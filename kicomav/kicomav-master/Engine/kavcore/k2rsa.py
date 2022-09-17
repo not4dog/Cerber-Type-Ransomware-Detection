@@ -235,7 +235,7 @@ def create_key(pu_fname='key.prk', pr_fname='key.skr', debug=False):
 
     # 공개키와 개인키가 생성되었다.
     if debug:
-        print ('[*] Make key : %s, %s' % (pu_fname, pr_fname))
+        print '[*] Make key : %s, %s' % (pu_fname, pr_fname)
 
     return True
 

@@ -44,7 +44,6 @@ class Engine:
     # ---------------------------------------------------------------------
     def __init__(self, verbose=False):
         self.verbose = verbose  # 디버깅 여부
-        self.verbost = True # 임시 디버깅 기능 활성화
 
         self.plugins_path = None  # 플러그인 경로
         self.temp_path = None  # 임시 폴더 클래스
