@@ -33,8 +33,6 @@ Cuckoo Web UI사용 및 Django 연동 : https://kkamagistory.tistory.com/578
 < kaggle >
 https://www.kaggle.com/dixhom/bayesian-optimization-with-optuna-stacking
 
-https://www.kaggle.com/code/dixhom/bayesian-optimization-with-optuna-stacking/notebook
-
 < dacon >
 https://dacon.io/codeshare/4646
 
@@ -45,14 +43,11 @@ https://github.com/hhoshino0421/SecurityMachineLearning
 
 < 참고하고 있는 Project >
 
-melpin
-https://github.com/melpin/capstone_design_project_2
+melpin : https://github.com/melpin/capstone_design_project_2
 
-securycore
-https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Detection
+securycore : https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Detection
 
-Malware-Detection-using-PEfiles 
-https://github.com/eo4929/Malware-Detection-using-PEfiles/tree/82e7e9fc65894b4efd7976d6be0f8622bff38333
+Malware-Detection-using-PEfiles : https://github.com/eo4929/Malware-Detection-using-PEfiles/tree/82e7e9fc65894b4efd7976d6be0f8622bff38333
 
 AI_based_Malware_Detection
 https://github.com/3ltigr0/AI_based_Malware_Detection/tree/07020eda1df0b36787cac896a85f28738302e813
