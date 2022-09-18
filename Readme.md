@@ -11,14 +11,13 @@
 조원 : 구영인(B989106)
 
 
-< Reference >
+< Pyqt5 >
 
-[ PyQt5 Tutorial - 파이썬으로 만드는 나만의 GUI 프로그램 ]
-https://wikidocs.net/21920
-https://wikidocs.net/119616
+PyQt5 Tutorial - 파이썬으로 만드는 나만의 GUI 프로그램  : https://wikidocs.net/21920
 
-[Pyqt5 완전정복 시리즈]
-https://wikidocs.net/160723
+PyQt를 이용한 파이썬 GUI 프로그래밍 : https://wikidocs.net/119616
+
+[Python 완전정복 시리즈] 3편 : PyQt 완전정복 : https://wikidocs.net/160723
 
 
 < Cuckoo Sandbox 관련  > 
@@ -37,14 +36,13 @@ securycore : https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Dete
 
 Malware-Detection-using-PEfiles : https://github.com/eo4929/Malware-Detection-using-PEfiles/tree/82e7e9fc65894b4efd7976d6be0f8622bff38333
 
-AI_based_Malware_Detection
-https://github.com/3ltigr0/AI_based_Malware_Detection/tree/07020eda1df0b36787cac896a85f28738302e813
+AI_based_Malware_Detection : https://github.com/3ltigr0/AI_based_Malware_Detection/tree/07020eda1df0b36787cac896a85f28738302e813
 
-Maleware Detection using Opcode Sequence
-https://github.com/sunung007/malware-detection/tree/409a1ce7173be6c7a777e0728cde2b005d5d9e0e
+Maleware Detection using Opcode Sequence : https://github.com/sunung007/malware-detection/tree/409a1ce7173be6c7a777e0728cde2b005d5d9e0e
 
 
 < Pycaret >
+
 공식홈페이지 : https://pycaret.readthedocs.io/en/stable/api/classification.html
 
 DOC : https://pycaret.readthedocs.io/en/stable/api/classification.html
