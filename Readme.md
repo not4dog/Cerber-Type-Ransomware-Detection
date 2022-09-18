@@ -21,27 +21,15 @@ https://wikidocs.net/119616
 https://wikidocs.net/160723
 
 
-< Cuckoo Sandbox 관련 > 
+< Cuckoo Sandbox 관련  > 
 
 API : https://cuckoo.readthedocs.io/en/latest/usage/api/
 
 Cuckoo Web UI사용 및 Django 연동 : https://kkamagistory.tistory.com/578
 
-[Optuna]
-공식 홈페이지 : https://optuna.readthedocs.io/en/stable/reference/index.html
 
-< kaggle >
-https://www.kaggle.com/dixhom/bayesian-optimization-with-optuna-stacking
 
-< dacon >
-https://dacon.io/codeshare/4646
-
-https://dacon.io/competitions/official/235840/codeshare/3834
-
-< Github >
-https://github.com/hhoshino0421/SecurityMachineLearning
-
-< 참고하고 있는 Project >
+< Project 참고용 >
 
 melpin : https://github.com/melpin/capstone_design_project_2
 
@@ -59,18 +47,35 @@ https://github.com/sunung007/malware-detection/tree/409a1ce7173be6c7a777e0728cde
 < Pycaret >
 공식홈페이지 : https://pycaret.readthedocs.io/en/stable/api/classification.html
 
-https://minimin2.tistory.com/137
+DOC : https://pycaret.readthedocs.io/en/stable/api/classification.html
 
 https://velog.io/@ezoo0422/Python-pycaret%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EB%AA%A8%EB%8D%B8-%EC%84%A0%EC%A0%95%ED%95%98%EA%B8%B0
 
 
+< Optuna > 
+
+공식 홈페이지 : https://optuna.readthedocs.io/en/stable/reference/index.html
+
+[ 에제 ] 
+
+kaggle : https://www.kaggle.com/dixhom/bayesian-optimization-with-optuna-stacking
+
+dacon : https://dacon.io/codeshare/4646
+
+https://dacon.io/competitions/official/235840/codeshare/3834
+
+< Github >
+
+https://github.com/hhoshino0421/SecurityMachineLearning
+
 < Kicom AV >
 
-공식홈페이지 : https://www.nurilab.com/kr/products/kicomav.html
+공식홈페이지 : https://www.nurilab.com/kr/products/kicomav.html 
 
-Windows Python 2,3 버전 관련 : https://lifere.tistory.com/89 
+가이드 : https://nurilab.github.io/2020/04/01/kicomav_guide/
 
-https://nurilab.github.io/2020/04/01/kicomav_guide/
+Windows Python 2,3 동시사용 : https://lifere.tistory.com/89
 
-https://s3ich4n.tistory.com/29
+Kicom AV DB 패턴 추가 : https://s3ich4n.tistory.com/29
+
 
