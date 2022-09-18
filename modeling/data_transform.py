@@ -2,7 +2,8 @@ import pandas as pd
 import numpy as np
 
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import MinMaxScaler, StandardScaler, RobustScaler, QuantileTransformer, PowerTransformer
+from sklearn.preprocessing import  StandardScaler, MinMaxScaler, MaxAbsScaler, RobustScaler
+
 
 class DataPreprocessor:
     def __init__(self):
@@ -18,6 +19,7 @@ class DataPreprocessor:
         cerber = pd.read_csv("cerber_frequency.csv")
         df = pd.concat([bengin, cerber])
         self.raw_data = df
+
 
     # 불필요한 특징 제거
     def remove_unnecessary_features(self):
@@ -38,17 +40,19 @@ class DataPreprocessor:
     def address_missing_value(self):
         # 2) missing value(결측값)를 중간값으로 imputation(대체) 하기
         imputer = SimpleImputer(missing_values=np.NaN, strategy="median")
-        check_imputer = imputer.fit.transform(self.pd_data)
+        check_imputer = imputer.fit_transform(self.pd_data)
 
-        print('결측치가 존재여부: ', check_imputer)
+        # print('결측치 중간값으로 대체: ', check_imputer)
 
     def remove_outlier_based_std(self):
+        # 표준점수 기반 이상치 제거
         for i in range(0, len(self.pd_data.iloc[1])):
-            # 3) Nan에 대해 0으로 대체
-            self.pd_data.iloc[:, i] = self.pd_data.iloc[:, i].replace(0, np.NaN)  # optional
+            self.pd_data.iloc[:, i] = self.pd_data.iloc[:, i].replace(0, np.NaN)  # 0을 NaN처리
             self.pd_data = self.pd_data[~(np.abs(self.pd_data.iloc[:, i] - self.pd_data.iloc[:, i].mean()) > (3 * self.pd_data.iloc[:, i].std()))].fillna(0)
 
+        print()
     def remove_outlier_based_IQR(self):
+        # IQR를 이용한 이상치 제거
         quartile_1, quartile_3 = np.percentile(self.pd_data, [25, 75])
         iqr = quartile_3 - quartile_1
         lower_bound = quartile_1 - (iqr * 1.5)
@@ -58,27 +62,19 @@ class DataPreprocessor:
 
     def make_scaled_data_list(self):
         minmax = MinMaxScaler()
+        maxabs = MaxAbsScaler()
         standard = StandardScaler()
         robust = RobustScaler()
-        # quantile = QuantileTransformer()
-        # power = PowerTransformer()
 
         minmax.fit(self.pd_data)
+        maxabs.fit(self.pd_data)
         standard.fit(self.pd_data)
         robust.fit(self.pd_data)
-        # quantile.fit(self.pd_data)
-        # power.fit(self.pd_data)
 
-        self.pd_scaled_data_list.append(minmax.transform(self.pd_data) )
+        self.pd_scaled_data_list.append(minmax.transform(self.pd_data))
+        self.pd_scaled_data_list.append(maxabs.transform(self.pd.data))
         self.pd_scaled_data_list.append(standard.transform(self.pd_data))
         self.pd_scaled_data_list.append(robust.transform(self.pd_data))
-        # self.pd_scaled_data_list.append(quantile.transform(self.pd_data))
-        # self.pd_scaled_data_list.append(power.transform(self.pd_data))
-
-    def put_cleaned_data_list(self):
-        print('[다양한 방식으로 re-scaling 된 데이터 리스트 반환]')
-        # print(self.pd_scaled_data_list)
-        return self.pd_scaled_data_list
 
     def make_scaled_data(self):
         standard = StandardScaler()
@@ -90,7 +86,13 @@ class DataPreprocessor:
         print('[스케일링 된 데이터 반환]')
         print(self.pd_scaled_data)
         print()
+
         return self.pd_scaled_data
+
+    def put_cleaned_data_list(self):
+        print('[다양한 방식으로 re-scaling 된 데이터 리스트 반환]')
+        print(self.pd_scaled_data_list)
+        return self.pd_scaled_data_list
 
 
 if __name__ == "__main__":
@@ -102,5 +104,7 @@ if __name__ == "__main__":
 
     data_preprocessor.make_scaled_data()
     data = data_preprocessor.put_cleaned_data()
+    data_preprocessor.put_cleaned_data_list()
+
 
 
