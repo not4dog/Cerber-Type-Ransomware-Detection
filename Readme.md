@@ -1,74 +1,46 @@
-종합설계 1조 - Opcode와 API의 특징정보를 활용한 Cerber형 랜섬웨어 탐지모델
+< 모델링 설명 >
 
-지도교수 : 유동영
+0. 지도 학습과는 달리 정답 라벨이 없는 데이터를 앞에서 나온 특징들을 K-Means 군집화 하여 실행파일에 대한 결과(정상,랜섬웨어) 예측하여 라벨링 ( Family ) 
+( 지도 학습에서 적절한 피처를 찾아내기 위한 전처리 과정 )
 
-조장 : 이계혁(B793170)
+1. 이러한 예측 결과를 3개의 분류 모델 ( RF, SVM, NB )를 이용하여 학습 시킨다.
 
-조원 : 황민채(B989109)   
+< 선정이유 >
 
-조원 : 현동엽(B789071)
+NB : 대표적인 확률론적 분류 모델의 일종으로 각 특징(Feature)들 사이에 독립성을 가정으로 하는 베이즈 정리를 토대로 분류하는 알고리즘
 
-조원 : 구영인(B989106)
+< 특징 >
+장점 : 학습 데이터 양의 적은 상황에서 좋은 성능 기대, 많은 특징들 사용 시 차원 저주 영향 X
+단점 : 모든 특징들이 독립적으로 보기 때문에 특징 추출 시 종속 관계를 가지는 특징 조합, 상관관계에 대해서 좋은 결과 기대하기 힘듬
 
-
-< Reference >
-
-[ PyQt5 Tutorial - 파이썬으로 만드는 나만의 GUI 프로그램 ]
-https://wikidocs.net/21920
-https://wikidocs.net/119616
-
-[Pyqt5 완전정복 시리즈]
-https://wikidocs.net/160723
+RF : 대표적인 앙상블 기반 알고리즘, 전체 데이터에서 무작위로 여러 갱의 하위 데이터를 추출 후, 여러 개 모델 생성 전체 데이터를 하나의 모델로 만드련 분류에 가장 도움이 되는 특징을 위주로 트리를 생성하는 분류 알고리즘
 
 
-< Cuckoo Sandbox 관련 > 
+장점 : 학습 데이터에서 큰 비중이 없는 특징들을 새롭게 유입하는 데이터에서는 중요한 역할이 될 수 있는데 이런 부분들을 포착하기 쉬움
 
-API : https://cuckoo.readthedocs.io/en/latest/usage/api/
-
-Cuckoo Web UI사용 및 Django 연동 : https://kkamagistory.tistory.com/578
-
-[Optuna]
-공식 홈페이지 : https://optuna.readthedocs.io/en/stable/reference/index.html
-
-< kaggle >
-https://www.kaggle.com/dixhom/bayesian-optimization-with-optuna-stacking
-
-< dacon >
-https://dacon.io/codeshare/4646
-
-https://dacon.io/competitions/official/235840/codeshare/3834
-
-< Github >
-https://github.com/hhoshino0421/SecurityMachineLearning
-
-< 참고하고 있는 Project >
-
-melpin : https://github.com/melpin/capstone_design_project_2
-
-securycore : https://github.com/securycore/MLRD-Machine-Learning-Ransomware-Detection
-
-Malware-Detection-using-PEfiles : https://github.com/eo4929/Malware-Detection-using-PEfiles/tree/82e7e9fc65894b4efd7976d6be0f8622bff38333
-
-AI_based_Malware_Detection
-https://github.com/3ltigr0/AI_based_Malware_Detection/tree/07020eda1df0b36787cac896a85f28738302e813
-
-Maleware Detection using Opcode Sequence
-https://github.com/sunung007/malware-detection/tree/409a1ce7173be6c7a777e0728cde2b005d5d9e0e
+특징 중요도를 계산하여 분류에 가장 많이 도움이 되는 특징을 백분율로 계산 ( 특징 공학 시 좋은 특징 선정 시 기준으로 사용 )
 
 
-< Pycaret >
-공식홈페이지 : https://pycaret.readthedocs.io/en/stable/api/classification.html
-
-https://minimin2.tistory.com/137
-
-https://velog.io/@ezoo0422/Python-pycaret%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EB%AA%A8%EB%8D%B8-%EC%84%A0%EC%A0%95%ED%95%98%EA%B8%B0
+SVM : 분류하려는 두 영역을 하나의 선으로 나눌 때, 선이 양쪽에 위치하는 점들과의 거리가 최대가 되도록 만드는 것이 목표
 
 
-< Kicom AV >
+2. 정적 특징과 동적 특징을 합쳐서 악성코드 탐지 모델을 만든 후  최적의 학습 매개변수 값(RF,SVM)을 정하기 위해 Optuna라는 자동 하이퍼파라미터 최적화 software framework를 이용하여 모델의 성능을 높였다.
 
-공식홈페이지 : https://www.nurilab.com/kr/products/kicomav.html
 
-https://nurilab.github.io/2020/04/01/kicomav_guide/
 
-https://s3ich4n.tistory.com/29
 
+
+
+
+
+
+
+
+
+< 참고 >
+
+출처: https://ebbnflow.tistory.com/165 [삶은 확률의 구름:티스토리]
+
+Native API 빈도 기반의 퍼지 군집화를 이용한 악성코드 재그룹화 기법연구 : https://koreascience.kr/article/JAKO200805441029427.pdf
+
+https://koreascience.kr/article/JAKO201919163609471.pdf 
