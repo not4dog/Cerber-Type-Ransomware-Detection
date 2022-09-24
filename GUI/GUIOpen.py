@@ -11,6 +11,7 @@ from PyQt5 import QtCore
 from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon
 import csv
+from datetime import datetime
 
 def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -18,7 +19,6 @@ def resource_path(relative_path):
 
 form = resource_path("GUI.ui")
 form_class = uic.loadUiType(form)[0]
-
 class Thread(QThread):
     _signal = pyqtSignal(int)
     def __init__(self):
@@ -26,13 +26,38 @@ class Thread(QThread):
     
     def run(self):
         for i in range(101):
-            sleep(2)
+            sleep(0.1)
             self._signal.emit(i)
-        
+
+class OptionWindow(QDialog):    
+    def __init__(self, parent):
+        super(OptionWindow, self).__init__(parent)       
+        option_ui = "Report.ui"        
+        uic.loadUi(option_ui, self)     
+        self.show()
+        self.setWindowTitle('CTRD v1.0 Detection Report')
+        self.SaveCSV.clicked.connect(self.CreateReport)
+
+    def CreateReport(self):
+        now = datetime.now()
+        f = open('Detection_Report\CTRD_Detection_Report.csv','w', newline='')
+        wr = csv.writer(f)
+        wr.writerow(["<CTRD v1.0 Uploaded File Detection Report>"])
+        wr.writerow([])
+        wr.writerow(["File Path", filename[0]])
+        wr.writerow(["File Size", filesize])
+        wr.writerow(["SHA256 Hash", sha256])
+        wr.writerow(["Detection Result"])
+        wr.writerow(["Scan Date", now.strftime('%Y-%m-%d %H:%M:%S')])
+        f.close()
+        msgBox = QMessageBox() 
+        msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
+        msgBox.information(msgBox,'Notice','결과보고서 파일이 생성되었습니다.\n\nDetection_Report 폴더를 확인해 주시기 바랍니다.', msgBox.Yes)
+
 class MyWindow(QMainWindow, form_class):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle('CTRD')
+        self.setWindowTitle('CTRD v1.0')
         self.setWindowFlag(Qt.FramelessWindowHint)
         self.setupUi(self)
         self.Initial.clicked.connect(self.InitialMethod)
@@ -53,7 +78,7 @@ class MyWindow(QMainWindow, form_class):
     def InitialMethod(self):
         msgbox = QMessageBox()
         msgbox.setStyleSheet('QMessageBox {color:black; background:white;}')
-        ret = msgbox.question(msgbox,'Question', '초기화 시 기존 분석자료와 탐지 결과가 영구적으로 삭제됩니다.\n\n그래도 초기화 하시겠습니까?', msgbox.Yes | msgbox.No)
+        ret = msgbox.question(msgbox,'Question', '초기화 시 기존 분석자료와 결과보고서가 영구적으로 삭제됩니다.\n\n그래도 초기화 하시겠습니까?', msgbox.Yes | msgbox.No)
         if ret == msgbox.Yes:
            QtCore.QCoreApplication.quit()
            QtCore.QProcess.startDetached(sys.executable, sys.argv)
@@ -82,11 +107,16 @@ class MyWindow(QMainWindow, form_class):
         if self.progressBar.value() == 100:
             self.progressBar.setValue(0)
             self.msg_box()
+        return
 
     def msg_box(self):
         msg = QMessageBox()                      
-        msg.information(msg,'Notice','실행파일 분석이 완료되었습니다.\n\nDetection_Report 폴더에서 탐지 결과를 확인해 주시기 바랍니다.')
-        self.Run.setDisabled(False)
+        ret = msg.information(msg,'Notice', '실행파일 분석이 완료되었습니다.\n\nYes 버튼을 클릭하시면 결과보고서 확인이 가능합니다.', msg.Yes | msg.Cancel)
+        if ret == msg.Yes:
+           OptionWindow(self)
+           self.Run.setDisabled(False)
+        else : self.Run.setDisabled(False)
+        return
 
     def hideWindow(self):
         self.showMinimized()
@@ -100,6 +130,7 @@ class MyWindow(QMainWindow, form_class):
                 hash_sha256.update(chunk)
                 chunk = f.read(4096)
         sha256 = hash_sha256.hexdigest()
+        return
 
     def ExtractOpcode(self) :
         os.system('objdump -d -j .text {0} > Detection_Feature_Data\File_Opcode_Extract.txt' .format(filename[0]))
@@ -117,8 +148,10 @@ class MyWindow(QMainWindow, form_class):
 
         f = open('Detection_Feature_Data\Opcode_Item_Frequency.csv','w', newline='')
         wr = csv.writer(f)
-        wr.writerow([sha256, push, mov, call, sub, jmp, add, cmp, test, lea, pop,])
+        wr.writerow(["SHA256", "push", "mov", "call", "sub", "jmp", "add", "cmp", "test", "lea", "pop"])
+        wr.writerow([sha256, push, mov, call, sub, jmp, add, cmp, test, lea, pop])
         f.close()
+        return
 
     def CountOpcode(self, item):
         file = open("Detection_Feature_Data\File_Opcode_Extract.txt", "r")
@@ -126,8 +159,18 @@ class MyWindow(QMainWindow, form_class):
         word_count = read_data.lower().count(item)
         return word_count
 
+    def FileSize(self, size_bytes):
+        import math
+        if size_bytes == 0:
+            return "0B"
+        size_name = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB")
+        i = int(math.floor(math.log(size_bytes, 1024)))
+        p = math.pow(1024, i)
+        s = round(size_bytes / p, 2)
+        return "%s %s" % (s, size_name[i])
+
     def Main(self):
-        global filename
+        global filename, filesize
         filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)') 
 
         if filename[0] !='' :
@@ -144,6 +187,8 @@ class MyWindow(QMainWindow, form_class):
                msgBox.warning(msgBox,'Warning','선택한 파일은 실행파일이 아닙니다.\n\n올바른 실행파일을 선택해 주시기 바랍니다.')
                return(print('실행파일이 아닌 파일 선택으로 인한 메인함수 중단'))
                
+            file_size = os.path.getsize('{0}' .format(filename[0]))
+            filesize = self.FileSize(file_size)
             self.Run.setDisabled(True)
             self.pBar()
             self.ExtractOpcode()
