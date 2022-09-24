@@ -52,7 +52,7 @@ class OptionWindow(QDialog):
         f.close()
         msgBox = QMessageBox() 
         msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
-        msgBox.information(msgBox,'Notice','결과보고서 파일이 생성되었습니다.\n\nDetection_Report 폴더를 확인해 주시기 바랍니다.', msgBox.Yes)
+        msgBox.information(msgBox,'Notice','CTRD 결과보고서 파일이 생성되었습니다.\n\nDetection_Report 폴더를 확인해 주시기 바랍니다.', msgBox.Ok)
 
 class MyWindow(QMainWindow, form_class):
     def __init__(self):
@@ -111,8 +111,8 @@ class MyWindow(QMainWindow, form_class):
 
     def msg_box(self):
         msg = QMessageBox()                      
-        ret = msg.information(msg,'Notice', '실행파일 분석이 완료되었습니다.\n\nYes 버튼을 클릭하시면 결과보고서 확인이 가능합니다.', msg.Yes | msg.Cancel)
-        if ret == msg.Yes:
+        ret = msg.information(msg,'Notice', '실행파일 분석이 완료되었습니다.\n\nOk 버튼을 클릭하시면 CTRD 결과보고서 확인이 가능합니다.', msg.Ok | msg.Cancel)
+        if ret == msg.Ok:
            OptionWindow(self)
            self.Run.setDisabled(False)
         else : self.Run.setDisabled(False)
