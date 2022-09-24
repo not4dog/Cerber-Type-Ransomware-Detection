@@ -32,6 +32,8 @@ DOC : https://pycaret.readthedocs.io/en/stable/api/classification.html
 
 https://velog.io/@ezoo0422/Python-pycaret%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EC%97%AC-%EB%AA%A8%EB%8D%B8-%EC%84%A0%EC%A0%95%ED%95%98%EA%B8%B0
 
+https://koreapy.tistory.com/737
+
 < Optuna >
 
 공식 홈페이지 : https://optuna.readthedocs.io/en/stable/reference/index.html
