@@ -216,19 +216,19 @@ border:none;</string>
       <rect>
        <x>20</x>
        <y>220</y>
-       <width>130</width>
+       <width>160</width>
        <height>41</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
-       <width>130</width>
+       <width>160</width>
        <height>0</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>130</width>
+       <width>160</width>
        <height>16777215</height>
       </size>
      </property>

@@ -40,7 +40,7 @@ class OptionWindow(QDialog):
 
     def CreateReport(self):
         now = datetime.now()
-        f = open('Detection_Report\CTRD_Detection_Report.csv','w', newline='')
+        f = open(f'Detection_Report\{sha256}_CTRD_Detection_Report.csv','w', newline='')
         wr = csv.writer(f)
         wr.writerow(["<CTRD v1.0 Uploaded File Detection Report>"])
         wr.writerow([])
@@ -111,7 +111,7 @@ class MyWindow(QMainWindow, form_class):
 
     def msg_box(self):
         msg = QMessageBox()                      
-        ret = msg.information(msg,'Notice', '실행파일 분석이 완료되었습니다.\n\nOk 버튼을 클릭하시면 CTRD 결과보고서 확인이 가능합니다.', msg.Ok | msg.Cancel)
+        ret = msg.information(msg,'Notice', '실행파일 분석이 완료되었습니다.\n\nOK 버튼을 클릭하시면 CTRD 결과보고서 확인이 가능합니다.', msg.Ok | msg.Cancel)
         if ret == msg.Ok:
            OptionWindow(self)
            self.Run.setDisabled(False)
@@ -133,7 +133,8 @@ class MyWindow(QMainWindow, form_class):
         return
 
     def ExtractOpcode(self) :
-        os.system('objdump -d -j .text {0} > Detection_Feature_Data\File_Opcode_Extract.txt' .format(filename[0]))
+        self.CheckSHA256()
+        os.system('objdump -d -j .text {0} > Detection_Feature_Data\{1}_Opcode_Extract.txt' .format(filename[0], sha256))
         push = self.CountOpcode("push")
         mov = self.CountOpcode("mov")
         call = self.CountOpcode("call")
@@ -144,9 +145,8 @@ class MyWindow(QMainWindow, form_class):
         test = self.CountOpcode("test")
         lea = self.CountOpcode("lea")
         pop = self.CountOpcode("pop")
-        self.CheckSHA256()
 
-        f = open('Detection_Feature_Data\Opcode_Item_Frequency.csv','w', newline='')
+        f = open(f'Detection_Feature_Data\{sha256}_Opcode_Frequency.csv','w', newline='')
         wr = csv.writer(f)
         wr.writerow(["SHA256", "push", "mov", "call", "sub", "jmp", "add", "cmp", "test", "lea", "pop"])
         wr.writerow([sha256, push, mov, call, sub, jmp, add, cmp, test, lea, pop])
@@ -154,7 +154,7 @@ class MyWindow(QMainWindow, form_class):
         return
 
     def CountOpcode(self, item):
-        file = open("Detection_Feature_Data\File_Opcode_Extract.txt", "r")
+        file = open(f"Detection_Feature_Data\{sha256}_Opcode_Extract.txt", "r")
         read_data = file.read()
         word_count = read_data.lower().count(item)
         return word_count
