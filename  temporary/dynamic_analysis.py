@@ -16,9 +16,9 @@ sftp.put(localpath, remotepath)
 #분석
 stdin, stdout, stderr = ssh.exec_command('cuckoo')
 stdin, stdout, stderr = ssh.exec_command('cuckoo api')#api서버 접속
-stdin, stdout, stderr = ssh.exec_command("curl -H 'Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew' -F 'file=@/home/b793170/Desktop/filename.exe' http://localhost:8090/tasks/create/file")
+stdin, stdout, stderr = ssh.exec_command("curl -H 'Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew' -F 'file=@/home/b793170/filename.exe' http://localhost:8090/tasks/create/file")
 stdin, stdout, stderr = ssh.exec_command('curl -H "Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew" http://localhost:8090/tasks/report/1/json >filename.json')
-stdin, stdout, stderr = ssh.exec_command('cuckoo clean')
+
 
 
 #서버결과
@@ -31,6 +31,7 @@ localpath2 = 'c:/Users/Hwang/Desktop/filename.json'
 sftp.get(remotepath2, localpath2)
 
 #우분투 내 파일삭제
+stdin, stdout, stderr = ssh.exec_command('cuckoo clean')
 stdin, stdout, stderr = ssh.exec_command('rm filename.exe filename.json')
 
 ssh.close()
