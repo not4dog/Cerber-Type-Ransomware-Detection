@@ -19,6 +19,8 @@ def resource_path(relative_path):
 
 form = resource_path("GUI.ui")
 form_class = uic.loadUiType(form)[0]
+form2 = resource_path("Report.ui")
+
 class Thread(QThread):
     _signal = pyqtSignal(int)
     def __init__(self):
@@ -31,11 +33,14 @@ class Thread(QThread):
 
 class OptionWindow(QDialog):    
     def __init__(self, parent):
-        super(OptionWindow, self).__init__(parent)       
-        option_ui = "Report.ui"        
-        uic.loadUi(option_ui, self)     
+        super(OptionWindow, self).__init__(parent)  
+        self.ui = uic.loadUi(form2, self)         
         self.show()
         self.setWindowTitle('CTRD v1.0 Detection Report')
+        self.FilePath.setText(filename[0])
+        self.FileSize.setText(filesize)
+        self.Hash.setText(sha256)
+        self.Result.setText("test%")
         self.SaveCSV.clicked.connect(self.CreateReport)
 
     def CreateReport(self):
@@ -44,11 +49,11 @@ class OptionWindow(QDialog):
         wr = csv.writer(f)
         wr.writerow(["<CTRD v1.0 Uploaded File Detection Report>"])
         wr.writerow([])
-        wr.writerow(["File Path", filename[0]])
-        wr.writerow(["File Size", filesize])
-        wr.writerow(["SHA256 Hash", sha256])
-        wr.writerow(["Detection Result"])
-        wr.writerow(["Scan Date", now.strftime('%Y-%m-%d %H:%M:%S')])
+        wr.writerow(["File Path",'', filename[0]])
+        wr.writerow(["File Size",'', filesize])
+        wr.writerow(["SHA256 Hash",'', sha256])
+        wr.writerow(["Detection Result",''])
+        wr.writerow(["Scan Date",'', now.strftime('%Y-%m-%d %H:%M:%S')])
         f.close()
         msgBox = QMessageBox() 
         msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
