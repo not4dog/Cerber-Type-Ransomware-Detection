@@ -19,11 +19,8 @@ stdin, stdout, stderr = ssh.exec_command('cuckoo api')#api서버 접속
 stdin, stdout, stderr = ssh.exec_command("curl -H 'Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew' -F 'file=@/home/b793170/filename.exe' http://localhost:8090/tasks/create/file")
 stdin, stdout, stderr = ssh.exec_command('curl -H "Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew" http://localhost:8090/tasks/report/1/json >filename.json')
 
-
-
 #서버결과
 print(''.join(stdout.readlines()))
-
 
 #파일전송(서버->로컬)
 remotepath2 = '/home/b793170/filename.json'
