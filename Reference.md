@@ -12,6 +12,10 @@ API : https://cuckoo.readthedocs.io/en/latest/usage/api/
 
 Cuckoo Web UI사용 및 Django 연동 : https://kkamagistory.tistory.com/578
 
+http://www.rennykim725230.com/wordpress/index.php/tree2/?mod=document&uid=47
+
+
+
 < Project 참고용 >
 
 melpin : https://github.com/melpin/capstone_design_project_2
