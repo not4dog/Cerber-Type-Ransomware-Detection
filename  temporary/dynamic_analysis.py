@@ -13,9 +13,9 @@ remotepath = '/home/b793170/5db631589b179544445b62d72e5021293408799c694c84845275
 localpath  = 'c:/Users/Hwang/Desktop/5db631589b179544445b62d72e5021293408799c694c848452752a8a01517d2e.exe' # local pc의 파일 경로/파일이름
 sftp.put(localpath, remotepath)
 
-#분석
+#쿠쿠분석
 stdin, stdout, stderr = ssh.exec_command('cuckoo')
-stdin, stdout, stderr = ssh.exec_command('cuckoo api')#api서버 접속
+stdin, stdout, stderr = ssh.exec_command('cuckoo api')
 stdin, stdout, stderr = ssh.exec_command("curl -H 'Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew' -F 'file=@/home/b793170/Desktop/5db631589b179544445b62d72e5021293408799c694c848452752a8a01517d2e.exe' http://localhost:8090/tasks/create/file")
 stdin, stdout, stderr = ssh.exec_command('curl -H "Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew" http://localhost:8090/tasks/report/1/json >5db631589b179544445b62d72e5021293408799c694c848452752a8a01517d2e.json')
 stdin, stdout, stderr = ssh.exec_command('cuckoo clean')
