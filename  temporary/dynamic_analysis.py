@@ -33,5 +33,6 @@ sftp.get(remotepath2, localpath2)
 #우분투 내 파일삭제
 stdin, stdout, stderr = ssh.exec_command('rm 5db631589b179544445b62d72e5021293408799c694c848452752a8a01517d2e.exe 5db631589b179544445b62d72e5021293408799c694c848452752a8a01517d2e.json')
 
+
 ssh.close()
 sftp.close()
