@@ -12,6 +12,7 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon
 import csv
 from datetime import datetime
+from Cuckoo_Analysis import*
 
 def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -137,6 +138,31 @@ class MyWindow(QMainWindow, form_class):
         sha256 = hash_sha256.hexdigest()
         return
 
+    def ExtractAPI(self) :
+        api1 = self.CountAPI("FindFirstFile")
+        api2 = self.CountAPI("SearchPathW")
+        api3 = self.CountAPI("SetFilePointer")
+        api4 = self.CountAPI("FindResourceEx")
+        api5 = self.CountAPI("GetFileAttributesW")
+        api6 = self.CountAPI("SetFileAttributesW")
+        api7 = self.CountAPI("SetFilePointerEx")
+        api8 = self.CountAPI("CryptEncrypt")
+        api9 = self.CountAPI("CreateThread")
+        api10 = self.CountAPI("FindResourceExW")
+
+        f = open(f'Detection_Feature_Data\{sha256}_API_Frequency.csv','w', newline='')
+        wr = csv.writer(f)
+        wr.writerow(["FindFirstFile", "SearchPathW", "SetFilePointer", "FindResourceEx", "GetFileAttributesW", "SetFileAttributesW", "SetFilePointerEx", "CryptEncrypt", "CreateThread", "FindResourceExW"])
+        wr.writerow([api1, api2, api3, api4, api5, api6, api7, api8, api9, api10])
+        f.close()
+        return
+
+    def CountAPI(self, item):
+        file = open(f"Detection_Feature_Data\{sha256}_API_Extract.json", "r")
+        read_data = file.read()
+        word_count = read_data.lower().count(item)
+        return word_count
+
     def ExtractOpcode(self) :
         self.CheckSHA256()
         os.system('objdump -d -j .text {0} > Detection_Feature_Data\{1}_Opcode_Extract.txt' .format(filename[0], sha256))
@@ -197,6 +223,13 @@ class MyWindow(QMainWindow, form_class):
             self.Run.setDisabled(True)
             self.pBar()
             self.ExtractOpcode()
+            self.sshConnect()
+            self.UploadedFileTransper()
+            self.CuckooAnalysis()
+            self.jsonTransper()
+            self.AnalysisFileRemove()
+            self.Exit()
+            self.ExtractAPI()
 
         else :
             msgBox = QMessageBox() 
