@@ -2,6 +2,7 @@ import os
 import paramiko
 import requests
 import json
+import time
 
 ssh = paramiko.SSHClient()
 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -14,22 +15,31 @@ localpath  = 'c:/Users/Hwang/Desktop/filename.exe' # local pc의 파일 경로/�
 sftp.put(localpath, remotepath)
 
 #분석
-stdin, stdout, stderr = ssh.exec_command('cuckoo')
-stdin, stdout, stderr = ssh.exec_command('cuckoo api')#api서버 접속
-stdin, stdout, stderr = ssh.exec_command("curl -H 'Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew' -F 'file=@/home/b793170/filename.exe' http://localhost:8090/tasks/create/file")
-stdin, stdout, stderr = ssh.exec_command('curl -H "Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew" http://localhost:8090/tasks/report/1/json >filename.json')
+#stdin, stdout, stderr = ssh.exec_command('cuckoo')#api서버 접속
+stdin, stdout, stderr = ssh.exec_command('cuckoo submit --timeout 90 /home/b793170/filename.exe')
 
-#서버결과
-print(''.join(stdout.readlines()))
+#파일존재여부 확인
+output = False
+result = False
+sec = 5
+
+while True :
+    stdin, stdout, stderr = ssh.exec_command('[ -f /home/b793170/.cuckoo/storage/analyses/1/reports/report.json ] && echo "$FILE True" || echo "$FILE False"')
+    output =''.join(stdout.readlines())
+    result = output.replace(" ","")
+    json.loads(result.lower())
+    time.sleep(sec)
+    if json.loads(result.lower()) != False :
+        break
 
 #파일전송(서버->로컬)
-remotepath2 = '/home/b793170/filename.json'
+remotepath2 = '/home/b793170/.cuckoo/storage/analyses/1/reports/report.json'
 localpath2 = 'c:/Users/Hwang/Desktop/filename.json'
 sftp.get(remotepath2, localpath2)
 
-#우분투 내 파일삭제
+
 stdin, stdout, stderr = ssh.exec_command('cuckoo clean')
-stdin, stdout, stderr = ssh.exec_command('rm filename.exe filename.json')
+stdin, stdout, stderr = ssh.exec_command('rm filename.exe')
 
 ssh.close()
 sftp.close()
