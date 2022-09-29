@@ -345,7 +345,7 @@ font: 63 13pt &quot;Bahnschrift SemiBold SemiConden&quot;;
 color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>test.exe</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="FileSize">
@@ -363,7 +363,7 @@ font: 63 13pt &quot;Bahnschrift SemiBold SemiConden&quot;;
 color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>25.5 MB</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="Hash">
@@ -381,7 +381,7 @@ font: 63 13pt &quot;Bahnschrift SemiBold SemiConden&quot;;
 color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>a4a1c512469926e731af7d1c44759bcae88120a75e4922ceb79e50840e1fb367</string>
+     <string/>
     </property>
    </widget>
    <widget class="QLabel" name="Result">
@@ -399,7 +399,7 @@ font: 63 13pt &quot;Bahnschrift SemiBold SemiConden&quot;;
 color: rgb(255, 255, 255);</string>
     </property>
     <property name="text">
-     <string>88.7%</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="SaveCSV">
