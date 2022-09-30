@@ -208,7 +208,6 @@ class MyWindow(QMainWindow, form_class):
     def Exists(self):
         output = False
         result = False
-        sec = 5
 
         while True :
             stdin, stdout, stderr = ssh.exec_command('[ -f /home/b793170/.cuckoo/storage/analyses/1/reports/report.json ] && echo "$FILE True" || echo "$FILE False"')
@@ -220,7 +219,7 @@ class MyWindow(QMainWindow, form_class):
                 break
 
     def FileTransperAndExtract(self):
-        remotepath2 = '/home/b793170/.cuckoo/storage/analyses/1/reports/report.json'
+        remotepath2 = '/home/b793170/.cuckoo/storage/analyses/latest/reports/report.json'
         localpath2 = 'Detection_Feature_Data\{0}_API_Extract.json' .format(sha256)
         sftp.get(remotepath2, localpath2)
         stdin, stdout, stderr = ssh.exec_command("rm -f /home/b793170/Desktop/Scan.exe")
@@ -244,7 +243,6 @@ class MyWindow(QMainWindow, form_class):
         wr.writerow([api1, api2, api3, api4, api5, api6, api7, api8, api9, api10])
         f.close()
         return
-
 
     def sleep(self):
         QTest.qWait(5000)
