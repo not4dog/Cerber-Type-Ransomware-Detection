@@ -15,8 +15,8 @@ localpath  = 'c:/Users/Hwang/Desktop/filename.exe' # local pc의 파일 경로/�
 sftp.put(localpath, remotepath)
 
 #분석
-#stdin, stdout, stderr = ssh.exec_command('cuckoo')#api서버 접속
 stdin, stdout, stderr = ssh.exec_command('cuckoo submit --timeout 90 /home/b793170/filename.exe')
+#stdin, stdout, stderr = ssh.exec_command('cuckoo')#api서버 접속
 
 #파일존재여부 확인
 output = False
