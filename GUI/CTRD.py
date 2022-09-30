@@ -219,7 +219,7 @@ class MyWindow(QMainWindow, form_class):
                 break
 
     def FileTransperAndExtract(self):
-        remotepath2 = '/home/b793170/.cuckoo/storage/analyses/latest/reports/report.json'
+        remotepath2 = '/home/b793170/.cuckoo/storage/analyses/1/reports/report.json'
         localpath2 = 'Detection_Feature_Data\{0}_API_Extract.json' .format(sha256)
         sftp.get(remotepath2, localpath2)
         stdin, stdout, stderr = ssh.exec_command("rm -f /home/b793170/Desktop/Scan.exe")
