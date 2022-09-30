@@ -12,7 +12,10 @@ from PyQt5 import QtGui
 from PyQt5.QtGui import QIcon
 import csv
 from datetime import datetime
-from Cuckoo_Analysis import*
+import paramiko
+import json
+from time import *
+from PyQt5.QtTest import *
 
 def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -29,7 +32,7 @@ class Thread(QThread):
     
     def run(self):
         for i in range(101):
-            sleep(0.1)
+            sleep(3)
             self._signal.emit(i)
 
 class OptionWindow(QDialog):    
@@ -138,25 +141,6 @@ class MyWindow(QMainWindow, form_class):
         sha256 = hash_sha256.hexdigest()
         return
 
-    def ExtractAPI(self) :
-        api1 = self.CountAPI("FindFirstFile")
-        api2 = self.CountAPI("SearchPathW")
-        api3 = self.CountAPI("SetFilePointer")
-        api4 = self.CountAPI("FindResourceEx")
-        api5 = self.CountAPI("GetFileAttributesW")
-        api6 = self.CountAPI("SetFileAttributesW")
-        api7 = self.CountAPI("SetFilePointerEx")
-        api8 = self.CountAPI("CryptEncrypt")
-        api9 = self.CountAPI("CreateThread")
-        api10 = self.CountAPI("FindResourceExW")
-
-        f = open(f'Detection_Feature_Data\{sha256}_API_Frequency.csv','w', newline='')
-        wr = csv.writer(f)
-        wr.writerow(["FindFirstFile", "SearchPathW", "SetFilePointer", "FindResourceEx", "GetFileAttributesW", "SetFileAttributesW", "SetFilePointerEx", "CryptEncrypt", "CreateThread", "FindResourceExW"])
-        wr.writerow([api1, api2, api3, api4, api5, api6, api7, api8, api9, api10])
-        f.close()
-        return
-
     def CountAPI(self, item):
         file = open(f"Detection_Feature_Data\{sha256}_API_Extract.json", "r")
         read_data = file.read()
@@ -199,10 +183,79 @@ class MyWindow(QMainWindow, form_class):
         p = math.pow(1024, i)
         s = round(size_bytes / p, 2)
         return "%s %s" % (s, size_name[i])
+    
+    def reset(self):
+        loop = QEventLoop()
+        QTimer.singleShot(5000, loop.quit) 
+        loop.exec_()
+
+    def sshConnect(self):
+        global ssh
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect('211.214.61.14',port='2200',username='b793170',password ='20100709')
+
+    def FileTransper(self):
+        global sftp
+        sftp =ssh.open_sftp()
+        remotepath = '/home/b793170/Desktop/Scan.exe' 
+        localpath  = filepath 
+        sftp.put(localpath, remotepath)
+
+    def Analysis(self):
+        stdin, stdout, stderr = ssh.exec_command("cuckoo submit --timeout 90 /home/b793170/Desktop/Scan.exe")
+
+    def Exists(self):
+        output = False
+        result = False
+        sec = 5
+
+        while True :
+            stdin, stdout, stderr = ssh.exec_command('[ -f /home/b793170/.cuckoo/storage/analyses/1/reports/report.json ] && echo "$FILE True" || echo "$FILE False"')
+            output =''.join(stdout.readlines())
+            result = output.replace(" ","")
+            json.loads(result.lower())
+            self.reset()
+            if json.loads(result.lower()) != False :
+                break
+
+    def FileTransperAndExtract(self):
+        remotepath2 = '/home/b793170/.cuckoo/storage/analyses/1/reports/report.json'
+        localpath2 = 'Detection_Feature_Data\{0}_API_Extract.json' .format(sha256)
+        sftp.get(remotepath2, localpath2)
+        stdin, stdout, stderr = ssh.exec_command("rm -f /home/b793170/Desktop/Scan.exe")
+        ssh.close()
+        sftp.close()
+
+        api1 = self.CountAPI("findfirstfile")
+        api2 = self.CountAPI("searchpathw")
+        api3 = self.CountAPI("setfilepointer")
+        api4 = self.CountAPI("findresourceex")
+        api5 = self.CountAPI("getfileattributesw")
+        api6 = self.CountAPI("setfileattributesw")
+        api7 = self.CountAPI("setfilepointerex")
+        api8 = self.CountAPI("cryptencrypt")
+        api9 = self.CountAPI("createthread")
+        api10 = self.CountAPI("findresourceexw")
+
+        f = open(f'Detection_Feature_Data\{sha256}_API_Frequency.csv','w', newline='' .format(sha256))
+        wr = csv.writer(f)
+        wr.writerow(["FindFirstFile", "SearchPathW", "SetFilePointer", "FindResourceEx", "GetFileAttributesW", "SetFileAttributesW", "SetFilePointerEx", "CryptEncrypt", "CreateThread", "FindResourceExW"])
+        wr.writerow([api1, api2, api3, api4, api5, api6, api7, api8, api9, api10])
+        f.close()
+        return
+
+
+    def sleep(self):
+        QTest.qWait(5000)
 
     def Main(self):
+        self.Run.setDisabled(True)
+        self.pBar()
         global filename, filesize
+        global filepath
         filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)') 
+        filepath = filename[0]
 
         if filename[0] !='' :
             with open(filename[0], 'rb') as f:
@@ -220,16 +273,13 @@ class MyWindow(QMainWindow, form_class):
                
             file_size = os.path.getsize('{0}' .format(filename[0]))
             filesize = self.FileSize(file_size)
-            self.Run.setDisabled(True)
-            self.pBar()
-            self.ExtractOpcode()
+
+            self.ExtractOpcode() 
             self.sshConnect()
-            self.UploadedFileTransper()
-            self.CuckooAnalysis()
-            self.jsonTransper()
-            self.AnalysisFileRemove()
-            self.Exit()
-            self.ExtractAPI()
+            self.FileTransper()
+            self.Analysis()
+            self.Exists()
+            self.FileTransperAndExtract()
 
         else :
             msgBox = QMessageBox() 
