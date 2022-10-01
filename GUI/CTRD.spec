@@ -14,7 +14,7 @@ block_cipher = None
 
 
 a = Analysis(
-    ['GUIOpen.py'],
+    ['CTRD.py'],
     pathex=[],
     binaries=[],
     datas=data,
