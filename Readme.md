@@ -1,5 +1,5 @@
 <h1 align="center">
-  종합설계 1조</br>Opcode와 API의 특징정보를 활용한</br>Cerber형 랜섬웨어 탐지모델</br>CTRD
+Opcode와 API의 특징정보를 활용한</br>Cerber형 랜섬웨어 탐지모델</br>CTRD
 </h1>
 
 지도교수 : 유동영
