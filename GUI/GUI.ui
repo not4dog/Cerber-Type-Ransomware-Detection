@@ -925,7 +925,7 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.511364, x2:1, y2:0.523,
      <bool>false</bool>
     </property>
     <property name="format">
-     <string>Processing...</string>
+     <string>Ready</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Initial">

@@ -324,6 +324,7 @@ class MyWindow(QMainWindow, form_class):
             file_size = os.path.getsize('{0}' .format(filename[0]))
             filesize = self.FileSize(file_size)
 
+            self.progressBar.setFormat("Processing...")
             self.pBar()
             self.Run.setDisabled(True)
             self.ExtractOpcode() 
