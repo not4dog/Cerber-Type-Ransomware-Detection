@@ -302,8 +302,6 @@ class MyWindow(QMainWindow, form_class):
         QApplication.processEvents()
 
     def Main(self):
-        self.Run.setDisabled(True)
-        self.pBar()
         global filename, filesize
         global filepath
         filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)') 
@@ -326,6 +324,8 @@ class MyWindow(QMainWindow, form_class):
             file_size = os.path.getsize('{0}' .format(filename[0]))
             filesize = self.FileSize(file_size)
 
+            self.pBar()
+            self.Run.setDisabled(True)
             self.ExtractOpcode() 
             self.sshConnect()
             self.FileTransper()
