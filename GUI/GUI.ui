@@ -375,7 +375,7 @@ border:none;</string>
       <string notr="true">font: 63 14pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;v 1.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;v 1.4&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
@@ -923,6 +923,9 @@ background-color: qlineargradient(spread:pad, x1:0, y1:0.511364, x2:1, y2:0.523,
     </property>
     <property name="invertedAppearance">
      <bool>false</bool>
+    </property>
+    <property name="format">
+     <string>Processing...</string>
     </property>
    </widget>
    <widget class="QPushButton" name="Initial">
