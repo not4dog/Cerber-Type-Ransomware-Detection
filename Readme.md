@@ -1,4 +1,6 @@
-종합설계 1조 - Opcode와 API의 특징정보를 활용한 Cerber형 랜섬웨어 탐지모델
+<h1 align="center">
+  <a href=https://www.ventoy.net/>종합설계 1조</br>Opcode와 API의 특징정보를 활용한 Cerber형 랜섬웨어 탐지모델</br>CTRD</a>
+</h1>
 
 지도교수 : 유동영
 
