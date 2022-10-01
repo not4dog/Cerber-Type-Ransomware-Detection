@@ -7,9 +7,9 @@
 <h4>1조 : 이계혁(B793170)&nbsp;&nbsp;황민채(B989109)&nbsp;&nbsp;현동엽(B789071)&nbsp;&nbsp;구영인(B989106)</h4><br>   
 
 <div>
-<img src="https://img.shields.io/badge/python-000000?style=for-the-badge&logo=python&logoColor=white">
-<img src="https://img.shields.io/badge/linux-000000?style=for-the-badge&logo=linux&logoColor=white">
-<img src="https://img.shields.io/badge/windows-000000?style=for-the-badge&logo=windows&logoColor=white">
-<img src="https://img.shields.io/badge/google colab-000000?style=for-the-badge&logo=google colab&logoColor=white">
-<img src="https://img.shields.io/badge/json-000000?style=for-the-badge&logo=json&logoColor=white">
+<img src="https://img.shields.io/badge/python-43c485?style=for-the-badge&logo=python&logoColor=white">
+<img src="https://img.shields.io/badge/linux-43c485?style=for-the-badge&logo=linux&logoColor=white">
+<img src="https://img.shields.io/badge/windows-43c485?style=for-the-badge&logo=windows&logoColor=white">
+<img src="https://img.shields.io/badge/google colab-43c485?style=for-the-badge&logo=google colab&logoColor=white">
+<img src="https://img.shields.io/badge/json-43c485?style=for-the-badge&logo=json&logoColor=white">
 </div>
