@@ -292,38 +292,38 @@ border:none;</string>
     <widget class="QLabel" name="VersionInfo_2">
      <property name="geometry">
       <rect>
-       <x>0</x>
+       <x>10</x>
        <y>330</y>
-       <width>70</width>
+       <width>60</width>
        <height>61</height>
       </rect>
      </property>
      <property name="minimumSize">
       <size>
-       <width>70</width>
+       <width>60</width>
        <height>61</height>
       </size>
      </property>
      <property name="maximumSize">
       <size>
-       <width>70</width>
+       <width>60</width>
        <height>61</height>
       </size>
      </property>
      <property name="font">
       <font>
        <family>Bahnschrift SemiBold SemiConden</family>
-       <pointsize>12</pointsize>
+       <pointsize>13</pointsize>
        <weight>7</weight>
        <italic>false</italic>
        <bold>false</bold>
       </font>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 63 12pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
+      <string notr="true">font: 63 13pt &quot;Bahnschrift SemiBold SemiConden&quot;;</string>
      </property>
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;v 1.0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;v 1.4&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignCenter</set>
