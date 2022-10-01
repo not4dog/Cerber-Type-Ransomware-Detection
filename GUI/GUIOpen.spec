@@ -7,7 +7,8 @@ data = [('GUI.ui', '.'),
         ('muxcrt.dll', '.'),
         ('objdump.exe', '.'),
         ('phxcrt.dll', '.'),
-        ('icon.ico', '.')]
+        ('phxcrt.dll', '.'),
+        ('CTRD_Upload_Spread.json', '.')]
 
 block_cipher = None
 
