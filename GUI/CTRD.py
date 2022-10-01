@@ -26,6 +26,7 @@ def resource_path(relative_path):
 form = resource_path("GUI.ui")
 form_class = uic.loadUiType(form)[0]
 form2 = resource_path("Report.ui")
+spreadKey = resource_path("CTRD_Upload_Spread.json")
 
 class Thread(QThread):
     _signal = pyqtSignal(int)
@@ -279,7 +280,7 @@ class MyWindow(QMainWindow, form_class):
                 "https://www.googleapis.com/auth/drive.file",
                 "https://www.googleapis.com/auth/drive"]
 
-        creds = ServiceAccountCredentials.from_json_keyfile_name("CTRD_Upload_Spread.json", scope)
+        creds = ServiceAccountCredentials.from_json_keyfile_name(spreadKey, scope)
         QApplication.processEvents()
 
         spreadsheet_name = "CTRD_Feature_Data"
