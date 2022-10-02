@@ -7,18 +7,9 @@
 3. K-Means Clustering을 통해 학습 후 데이터를 크게 2개의 군집으로 나눈 뒤 가장 좋은 클러스터를 기준으로 재그룹화하여 정상,cerber 레이블을 지정 
 ( 지도 학습에서 적절한 피처를 찾아내기 위한 전처리 과정 )
 
-4. 정상, cerber를 구분하기 위해 3개의 분류 모델 ( RF, SVM, NB )를 이용하여 분류한다
+4. 정상, cerber를 구분하기 위해 3개의 분류 모델 ( RF, SVM, NB )를 이용하여 K-Fold 교차 검증을 통해 모델 평가 수행
+
+5. 모델의 성능을 구하기 위해 하이퍼 파라미터 최적화 프레임 워크인 Optuna를 사용하여 모델 성능을 높인 후, Confussionm Martix로 정확도, 정밀도, 재현율 , Fl-score로 결과 출력
 
 
 
-
-
-
-
-< 참고 >
-
-출처: https://ebbnflow.tistory.com/165 [삶은 확률의 구름:티스토리]
-
-Native API 빈도 기반의 퍼지 군집화를 이용한 악성코드 재그룹화 기법연구 : https://koreascience.kr/article/JAKO200805441029427.pdf
-
-https://koreascience.kr/article/JAKO201919163609471.pdf 
