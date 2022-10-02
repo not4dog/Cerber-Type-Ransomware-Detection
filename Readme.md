@@ -7,11 +7,11 @@
 <h4>1조 : 이계혁 (B793170)&nbsp;&nbsp;황민채 (B989109)&nbsp;&nbsp;현동엽 (B789071)&nbsp;&nbsp;구영인 (B989106)</h4><br>   
 
 <div>
-<img src="GUI/python.png" width="50" height="50">&nbsp;
-<img src="GUI/windows.png" width="50" height="50">&nbsp;
-<img src="GUI/linux.png" width="50" height="50">&nbsp;
-<img src="GUI/pyqt.png" width="50" height="50">&nbsp;
-<img src="GUI/colab.png" width="50" height="50">&nbsp;
-<img src="GUI/cuckoo.png" width="50" height="50">&nbsp;
-<img src="GUI/ssh.png" width="50" height="50">
+<img src="GUI/logo/python.png" width="50" height="50">&nbsp;
+<img src="GUI/logo/windows.png" width="50" height="50">&nbsp;
+<img src="GUI/logo/linux.png" width="50" height="50">&nbsp;
+<img src="GUI/logo/pyqt.png" width="50" height="50">&nbsp;
+<img src="GUI/logo/colab.png" width="50" height="50">&nbsp;
+<img src="GUI/logo/cuckoo.png" width="50" height="50">&nbsp;
+<img src="GUI/logo/ssh.png" width="50" height="50">
 </div>
