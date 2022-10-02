@@ -18,6 +18,9 @@ from PyQt5.QtTest import *
 import pandas as pd
 from oauth2client.service_account import ServiceAccountCredentials
 import gspread
+from openpyxl import Workbook
+from openpyxl.styles import Font, Alignment
+from openpyxl.styles import Border, Side
 
 def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -35,7 +38,7 @@ class Thread(QThread):
     
     def run(self):
         for i in range(101):
-            sleep(2)
+            sleep(0.8)
             self._signal.emit(i)
 
 class OptionWindow(QDialog):    
@@ -51,17 +54,90 @@ class OptionWindow(QDialog):
         self.SaveCSV.clicked.connect(self.CreateReport)
 
     def CreateReport(self):
-        now = datetime.now()
-        f = open(f'CTRD_Report\{sha256}_CTRD_Detection_Report.csv','w', newline='')
-        wr = csv.writer(f)
-        wr.writerow(["<CTRD v1.0 Uploaded File Detection Report>"])
-        wr.writerow([])
-        wr.writerow(["File Path",'', filename[0]])
-        wr.writerow(["File Size",'', filesize])
-        wr.writerow(["SHA256 Hash",'', sha256])
-        wr.writerow(["Detection Result",''])
-        wr.writerow(["Scan Date",'', now.strftime('%Y-%m-%d %H:%M:%S')])
-        f.close()
+        box = Border(bottom=Side(border_style="thick", color='00000000'))
+
+        wb = Workbook()
+        ws = wb.active
+        ws['A1'] = 'CTRD REPORT'
+        ca1 = ws['A1']
+        ca1.font = Font(name='Segoe UI Black', size=26)
+        ca1.alignment = Alignment(horizontal='center', vertical='center')
+        ca1.border = box
+        ws.merge_cells('A1:J1')
+
+        ws2 = wb.active
+        ws2.merge_cells('A2:B4')
+        ws2['A2'] = 'File Path'
+        ca2 = ws['A2']
+        ca2.font = Font(name='Bahnschrift SemiBold SemiConden', size=12)
+        ca2.alignment = Alignment(vertical='center')
+
+        ws3 = wb.active
+        ws3.merge_cells('C2:J4')
+        ws3['C2'] = filepath
+        ca3 = ws['C2']
+        ca3.font = Font(name='Bahnschrift SemiLight SemiConde', size=11)
+        ca3.alignment = Alignment(vertical='center')
+
+        ws4 = wb.active
+        ws4.merge_cells('A5:B7')
+        ws4['A5'] = 'File Size'
+        ca4 = ws['A5']
+        ca4.font = Font(name='Bahnschrift SemiBold SemiConden', size=12)
+        ca4.alignment = Alignment(vertical='center')
+
+        ws5 = wb.active
+        ws5.merge_cells('C5:J7')
+        ws5['C5'] = filesize
+        ca5 = ws['C5']
+        ca5.font = Font(name='Bahnschrift SemiLight SemiConde', size=11)
+        ca5.alignment = Alignment(vertical='center')
+
+        ws6 = wb.active
+        ws6.merge_cells('A8:B10')
+        ws6['A8'] = 'SHA256 Hash'
+        ca6 = ws['A8']
+        ca6.font = Font(name='Bahnschrift SemiBold SemiConden', size=12)
+        ca6.alignment = Alignment(vertical='center')
+
+        ws7 = wb.active
+        ws7.merge_cells('C8:J10')
+        ws7['C8'] = sha256
+        ca7 = ws['C8']
+        ca7.font = Font(name='Bahnschrift SemiLight SemiConde', size=11)
+        ca7.alignment = Alignment(vertical='center')
+
+        ws8 = wb.active
+        ws8.merge_cells('A11:B13')
+        ws8['A11'] = 'Detection Result'
+        ca8 = ws['A11']
+        ca8.font = Font(name='Bahnschrift SemiBold SemiConden', size=12)
+        ca8.alignment = Alignment(vertical='center')
+
+        ws9 = wb.active
+        ws9.merge_cells('C11:J13')
+        ws9['C11'] = 'test%'
+        ca9 = ws['C11']
+        ca9.font = Font(name='Bahnschrift SemiLight SemiConde', size=11)
+        ca9.alignment = Alignment(vertical='center')
+
+        ws10 = wb.active
+        ws10['A14'] = 'Scan Date'
+        ca10 = ws['A14']
+        ca10.font = Font(name='Bahnschrift SemiBold SemiConden', size=12)
+        ca10.alignment = Alignment(vertical='center')
+        ca10.border = box
+        ws10.merge_cells('A14:B16')
+
+        ws11 = wb.active
+        ws11['C14'] = now.strftime(f'%Y-%m-%d %H:%M:%S')
+        ca11 = ws['C14']
+        ca11.font = Font(name='Bahnschrift SemiLight SemiConde', size=11)
+        ca11.alignment = Alignment(vertical='center')
+        ca11.border = box
+        ws11.merge_cells('C14:J16')
+
+        wb.save('CTRD_Report/{0}_CTRD_Report.xlsx' .format(sha256))
         msgBox = QMessageBox() 
         msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
         msgBox.information(msgBox,'Notice','CTRD 결과보고서 파일이 생성되었습니다.\n\nCTRD_Report 폴더를 확인해 주시기 바랍니다.', msgBox.Ok)
@@ -304,6 +380,8 @@ class MyWindow(QMainWindow, form_class):
     def Main(self):
         global filename, filesize
         global filepath
+        global now 
+        now = datetime.now()
         filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)') 
         filepath = filename[0]
 
