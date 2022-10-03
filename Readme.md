@@ -16,6 +16,7 @@
 
 
 
-[ 참고 ]
+[ 머신러닝 참고 ]
+https://datascienceschool.net/intro.html
 https://dacon.io/myprofile/428400/codeshare
 
