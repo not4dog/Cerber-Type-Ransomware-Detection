@@ -7,13 +7,14 @@ data = [('GUI.ui', '.'),
         ('muxcrt.dll', '.'),
         ('objdump.exe', '.'),
         ('phxcrt.dll', '.'),
-        ('icon.ico', '.')]
+        ('phxcrt.dll', '.'),
+        ('CTRD_Upload_Spread.json', '.')]
 
 block_cipher = None
 
 
 a = Analysis(
-    ['GUIOpen.py'],
+    ['CTRD.py'],
     pathex=[],
     binaries=[],
     datas=data,
@@ -43,7 +44,7 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
