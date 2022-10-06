@@ -54,19 +54,17 @@ class DataAnalyzer:
         # 사이즈 지정
         fig, ax = plt.subplots(figsize=(7, 7))
 
-        # 삼각형 마스크를 만든다(위 쪽 삼각형에 True, 아래 삼각형에 False)
-        mask = np.zeros_like(df, dtype=np.bool)
-        mask[np.triu_indices_from(mask)] = True
-
         # 히트맵
         sns.heatmap(df,
                     cmap='RdYlBu_r',
                     annot=True,
-                    mask=mask,
                     linewidths=.5,
                     cbar_kws={"shrink": .5},
                     vmin=-1, vmax=1
                     )
+        plt.title("Dataset Correlation_Visual")
+        # 그래프를 이미지 파일 등으로 저장
+        plt.savefig('Dataset Correlation')
         plt.show()
 
     def show_correlation_label_attribute(self):
@@ -74,50 +72,62 @@ class DataAnalyzer:
         corr_matrix = self.raw_data.corr()
         print(corr_matrix["family"].sort_values(ascending=False))
         print()
-        # 결과 확인: 특정 feature에 의해 영향받지 않음
 
     def check_normality_test(self):
-        # 표본이 2000개 이상이니, Kolmogorove-Smirnov test로 정규성 검정
 
         print('[feature 별 정규성 검정]')
         for col, item in self.meaningful_raw_data.iteritems():
             print(kstest(self.meaningful_raw_data[col],'norm') )
 
         print()
-        # 결과 확인: 모든 feature가 정규분포를 따르지 않음
 
- # 시각화
-# class DataVisualizer:
-#     def __init__(self):
-#         self.load_raw_data()
-#
-#     def load_raw_data(self):
-#         bengin = pd.read_csv("bengin_frequency.csv")
-#         cerber = pd.read_csv("cerber_frequency.csv")
-#         df = pd.concat([bengin, cerber])
-#         self.raw_data = df
-#         self.meaningful_raw_data = self.raw_data.drop(['SHA-256'], axis=1)
-#
-#     def show_pair_plot(self):
-#         sns.pairplot(self.raw_data)
-#         plt.title("Dataset Pair Plot")
-#         # 그래프를 이미지 파일 등으로 저장
-#         plt.savefig('Dataset_Pair Plot')
-#         plt.show()
-#
-#     def show_dist_plot(self):
-#         sns.distplot(self.meaningful_raw_data)
-#         plt.title("Dataset distribution Plot")
-#         plt.show()
+# 시각화
+class DataVisualizer:
+    def __init__(self):
+        self.load_raw_data()
 
+    def load_raw_data(self):
+        bengin = pd.read_csv("bengin_frequency.csv")
+        cerber = pd.read_csv("cerber_frequency.csv")
+        df = pd.concat([bengin, cerber])
+        self.raw_data = df
+        self.meaningful_raw_data = self.raw_data.drop(['SHA-256'], axis=1)
+
+    def show_dist_plot(self):
+        sns.distplot(self.meaningful_raw_data)
+        plt.title("Dataset distribution Plot")
+        plt.savefig('Dataset_distribution Plot')
+        plt.show()
+
+    def show_box_plot(self):
+        sns.boxplot(self.meaningful_raw_data)
+        plt.title("Dataset Box Plot")
+        plt.savefig('Dataset_Box Plot')
+        plt.show()
+
+    def show_bar_plot(self):
+        sns.barplot(self.meaningful_raw_data)
+        plt.title("Dataset Bar Plot")
+        plt.savefig('Dataset_Bar Plot')
+        plt.show()
+
+    def show_scatter_plot(self):
+        sns.scatterplot(self.meaningful_raw_data)
+        plt.title("Dataset Scatter Plot")
+        plt.savefig('Dataset_Scatter Plot')
+        plt.show()
 
 if __name__ == '__main__':
     data_analyzer = DataAnalyzer()
     data_analyzer.show_statistics()
     data_analyzer.show_label_info()
     data_analyzer.show_correlation()
+    data_analyzer.show_correlation_visual()
     data_analyzer.show_correlation_label_attribute()
     data_analyzer.check_normality_test()
 
     # data_visualizer = DataVisualizer()
-    # data_visualizer.show_pair_plot()
+    # # data_visualizer.show_dist_plot()
+    # data_visualizer.show_box_plot()
+    # data_visualizer.show_bar_plot()
+    # data_visualizer.show_scatter_plot()
