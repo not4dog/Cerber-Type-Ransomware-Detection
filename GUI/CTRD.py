@@ -335,7 +335,7 @@ class MyWindow(QMainWindow, form_class):
 
         f = open(f'CTRD_Feature_Data\{sha256}_API_Frequency.csv','w', newline='' .format(sha256))
         wr = csv.writer(f)
-        wr.writerow(["FindFirstFile", "SearchPathW", "SetFilePointer", "FindResourceEx", "GetFileAttributesW", "SetFileAttributesW", "SetFilePointerEx", "CryptEncrypt", "CreateThread", "FindResourceExW", "Family"])
+        wr.writerow(["FindFirstFile", "SearchPathW", "SetFilePointer", "FindResourceEx", "GetFileAttributesW", "SetFileAttributesW", "SetFilePointerEx", "CryptEncrypt", "CreateThread", "FindResourceExW", "Cerber"])
         wr.writerow([api1, api2, api3, api4, api5, api6, api7, api8, api9, api10])
         f.close()
         return
