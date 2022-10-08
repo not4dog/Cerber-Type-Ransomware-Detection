@@ -1,5 +1,5 @@
 <h2>CTRD v1.4</h2>
-<h3>Opcode와 API의 특징정보를 활용한 Cerber형 랜섬웨어 탐지 플랫폼</h3><br>
+<h3>Opcode와 API의 특징정보를 활용한 기계학습 기반 Cerber형 랜섬웨어 탐지 플랫폼</h3><br>
 
 <img src="ScreenShot.png" width="600" height="350">
 
