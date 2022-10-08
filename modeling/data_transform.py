@@ -33,7 +33,8 @@ class DataPreprocessor:
         missing_col = []
         for col in dataframe.columns:
             missing_values = sum(dataframe[col].isna())
-            is_missing = True if missing_values >= 1 else False
+            is_missing = True \
+                if missing_values >= 1 else False
             if is_missing:
                 print(f'결측치가 있는 컬럼은: {col} 입니다')
                 print(f'해당 컬럼에 총 {missing_values} 개의 결측치가 존재합니다.')
@@ -99,7 +100,7 @@ class DataPreprocessor:
     def make_scaled_data(self):
 
         # 정규화 -  서로 다른 피처의 크기를 통일하기 위해 크기를 변환
-        scaler = StandardScaler()
+        scaler = RobustScaler()
         scaler.fit(self.pd_data)
 
         self.pd_scaled_data = scaler.transform(self.pd_data)

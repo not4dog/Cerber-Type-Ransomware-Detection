@@ -1,12 +1,13 @@
 # 라이브러리 정리 모음
 import pandas as pd
 
+# pycaret -> 오류시 sckit-learn : 0.23.2로 변경
 from pycaret.classification import *
-from pycaret.utils import check_metric
+from pycaret.distributions import UniformDistribution, DiscreteUniformDistribution, CategoricalDistribution, IntUniformDistribution
 
+from pycaret.utils import check_metric
 from sklearn.model_selection import train_test_split
 
-from optuna import Trial, visualization
 from data_transform import DataPreprocessor
 
 class ModelMaker:
@@ -17,8 +18,6 @@ class ModelMaker:
         self.raw_data = None
         self.pd_data = None
 
-        self.data = None # labeled data
-
         self.X_train= None
         self.X_test= None
         self.y_train= None
@@ -27,18 +26,11 @@ class ModelMaker:
         self.final_model= None
 
     def load_data(self, cleaned_data):
-
         self.raw_data = pd.read_csv("All_Feature_CTRD_Data.csv")
-        self.pd_data = cleaned_data # standardized data 활용
 
         # 이 부분은 나중에 정적 분석이나 행위 분석만 실시 할 때 vs 정적 + 행위분석 합친거 탐지율 비교 시 사용
         self.opcode_data = self.raw_data.loc[:,"push":"pop"]
         self.api_data = self.raw_data.loc[:,"FindFirstFile":"FindResourceExW"]
-
-
-        print(self.raw_data)
-        #print(self.opcode_data)
-        #print(self.api_data)
 
 
     def prepare_labeled_data(self):
@@ -52,13 +44,11 @@ class ModelMaker:
         self.data = res
 
     def split_data(self):
-            # Train & Test 분리
+            # Train(X) & Test(Y) 분리
             y = self.data['Cerber']
             X = self.data.drop(['Cerber'],axis=1)
 
-
-
-            x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
+            x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y,random_state=42)
 
             self.X_train = x_train
             self.X_test = y_test
@@ -67,18 +57,20 @@ class ModelMaker:
 
     def prepare_model(self):
 
-        # 모델 구축
+        # 훈련 데이터 결합
         training_data = pd.concat([self.X_train, self.y_train], axis=1)
         print(training_data)
 
-        # 모델
-        s = setup(training_data,
+        # 모델 파이프라인 구축
+        clf = setup(training_data,
                   target='Cerber',
                   train_size=0.8,
-                  fold_strategy='stratifiedkfold',
-                  fold=10,
-                  fix_imbalance=True,
-                  feature_selection=True)
+                  remove_multicollinearity= True, #다중공선성을 가지고 있는 변수 두개 중 target과 correlation이 더 낮은 변수를 삭제
+                  fix_imbalance=True,  # 불균형 방지를 위해 SMOTE 적용
+                  feature_selection=True,
+                  fold_strategy = 'stratifiedkfold',
+                  fold = 10,
+        )
 
         # 데이터 셋에 따른 적합한 모델 선정
 
@@ -102,14 +94,14 @@ class ModelMaker:
 
         # 하이퍼 파라미터 튜닝
 
-        # rf_params = {
-        #     "n_estimators": Trial.suggest_int("n_estimators", 10, 100),
-        #     "max_depth": Trial.suggest_int("max_depth", 1, 10),
-        #     "min_samples_split": Trial.suggest_int("min_samples_split", 2, 10),
-        #     "min_samples_leaf": Trial.suggest_int("min_samples_leaf", 1, 5)
-        # }
+        rf_params = {
+            "n_estimators":  IntUniformDistribution(10, 100),
+            "max_depth": IntUniformDistribution(1, 10),
+            "min_samples_split": IntUniformDistribution(2, 10),
+            "min_samples_leaf": IntUniformDistribution(1, 5)
+        }
 
-        tuned_rf = tune_model(rf, n_iter=20, optimize='Accuracy', search_library='optuna', search_algorithm = "tpe")
+        tuned_rf = tune_model(rf, n_iter=20, optimize='Accuracy', custom_grid=rf_params, search_library='optuna')
 
         print()
         print(tuned_rf)
@@ -131,10 +123,10 @@ class ModelMaker:
         print('Optuna_Tuning_RBFSVM')
         print('- - - - - - - - - - - - - - - - ')
 
-        # svm_params = {
-        #         "C": Trial.suggest_loguniform("C", 1e-5, 1e5),
-        #         "gamma" : Trial.suggest_loguniform('gamma',1e-5,1e5),
-        # }
+        svm_params = {
+                "C": UniformDistribution(1e-5, 1e5),
+                "gamma" : UniformDistribution(1e-5,1e5),
+        }
 
         tuned_rbfsvm = tune_model(rbfsvm, n_iter=20, optimize='Accuracy', search_library='optuna', search_algorithm = "tpe")
 
@@ -181,6 +173,7 @@ class ModelMaker:
 
 
         prediction_result = predict_model(self.final_model,data = self.X_test)
+        print(prediction_result)
 
         eval_Accuracy = check_metric(self.y_test, prediction_result['Label'], metric='Accuracy')
         print('Accuracy: ', eval_Accuracy)
@@ -205,7 +198,7 @@ class ModelMaker:
         plot_model(estimator=self.final_model, plot='feature',save=True)
 
 
-        # 모델 분석 후 각 플롯을 볼 수 있도록 사용자 인터페이스를 제공 ( 종합 )
+        # 모델 분석 후 각 플롯을 볼 수 있도록 사용자 인터페이스를 제공 ( 종합적으로 출력 )
         evaluate_model(estimator=self.final_model)
 
     def save_model(self):
@@ -217,23 +210,15 @@ class ModelMaker:
 
 
 if __name__ == "__main__":
-    data_preprocessor = DataPreprocessor()
-    data_preprocessor.load_raw_data()
-    data_preprocessor.remove_duplicated()
-    #data_preprocessor.remove_unnecessary_features()
-    data_preprocessor.remove_outlier_based_std()
 
-
-    data_preprocessor.make_scaled_data()
-    data = data_preprocessor.put_cleaned_data()
-    # data_preprocessor.put_cleaned_data_list()
 
     models = ModelMaker()
-    models.load_data(data)
+    models.load_data()
     models.prepare_labeled_data()
     models.split_data()
     models.prepare_model()
     models.predict_and_evaluate()
+    models.model_visualiation()
     models.save_model()
 
 

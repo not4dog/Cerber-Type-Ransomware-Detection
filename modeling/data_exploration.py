@@ -2,10 +2,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+
+from pandas_profiling import ProfileReport
 from scipy.stats import probplot
 from scipy.stats import skew, kurtosis
-
-
 from scipy.stats import shapiro
 from scipy.stats import chi2_contingency
 
@@ -41,7 +41,7 @@ class DataAnalyzer:
         print()
 
     def show_correlation(self):
-        self.meaningful_raw_data = self.raw_data.drop(['SHA-256',"Cerber"], axis = 1)
+        self.meaningful_raw_data = self.raw_data.drop(['SHA-256'], axis = 1)
 
         print('[컬럼별 상관관계 정보]')
         print(self.meaningful_raw_data.corr())
@@ -70,6 +70,7 @@ class DataAnalyzer:
         corr_matrix = self.raw_data.corr()
         print(corr_matrix["Cerber"].sort_values(ascending=False))
         print()
+
 
     def check_normality_test(self):
         # 데이터셋이 어떤식으로 정규분포가 이뤄졌는지 확인하여 스케일링을 결정
@@ -113,10 +114,19 @@ class DataVisualizer:
         plt.show()
 
     def show_dist_plot(self):
-        sns.distplot(self.meaningful_raw_data)
+        sns.displot(self.meaningful_raw_data)
         plt.title("Dataset distribution Plot")
         plt.savefig('Dataset_distribution Plot')
         plt.show()
+
+    def show_data_profile(self):
+        # EDA 리포트 생성 - html로 생성
+        profile = ProfileReport(self.pd_data, title="data profile",minimal=True)
+        print(profile)
+        profile.to_file("data_profile_report.html")
+        print(self.pd_data.dtypes)
+        pr = self.pd_data.profile_report()
+        print(pr)
 
 
 
@@ -130,8 +140,8 @@ if __name__ == '__main__':
     data_analyzer.check_normality_test()
 
     data_visualizer = DataVisualizer()
-    data_visualizer.show_dist_plot()
     data_visualizer.show_box_plot()
+    data_visualizer.show_dist_plot()
     # data_visualizer.show_bar_plot()
     # data_visualizer.show_scatter_plot()
-    # data_visualizer.show_QQ_plot()
+    data_visualizer.show_data_profile()
