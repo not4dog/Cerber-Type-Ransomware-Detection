@@ -16,7 +16,7 @@ class DataPreprocessor:
         self.load_raw_data()
 
     def load_raw_data(self):
-        self.raw_data = pd.read_csv("All_Feature_CTRD_Data.csv")
+        self.raw_data = pd.read_csv("../GUI/CTRD_Feature_Data/All_Feature_CTRD_Data.csv")
 
     def remove_duplicated(self):
         # SHA-256 기준으로 중복 값 제거
@@ -140,8 +140,7 @@ if __name__ == "__main__":
     #data_preprocessor.remove_outlier_based_std()
     #data_preprocessor.remove_outlier_based_IQR()
 
-    data_preprocessor.make_scaled_data()
-    data = data_preprocessor.put_cleaned_data()
+
     # data_preprocessor.put_cleaned_data_list()
 
 

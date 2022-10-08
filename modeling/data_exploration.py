@@ -12,7 +12,7 @@ from scipy.stats import chi2_contingency
 # 데이터 분석
 class DataAnalyzer:
     def __init__(self):
-        self.raw_data = pd.read_csv("All_Feature_CTRD_Data.csv")
+        self.raw_data = pd.read_csv("../GUI/CTRD_Feature_Data/All_Feature_CTRD_Data.csv")
 
         print('[raw data 정보]')
         print(self.raw_data)
@@ -52,6 +52,11 @@ class DataAnalyzer:
 
         # 사이즈 지정
         fig, ax = plt.subplots(figsize=(10, 10))
+
+        # 삼각형 마스크를 만든다(위 쪽 삼각형에 True, 아래 삼각형에 False)
+        mask = np.zeros_like(corr, dtype=np.bool)
+        mask[np.triu_indices_from(mask)] = True
+
         # 히트맵
         sns.heatmap(corr,
                     cmap='RdYlBu_r',
@@ -92,8 +97,8 @@ class DataVisualizer:
         self.load_raw_data()
 
     def load_raw_data(self):
-        self.raw_data = pd.read_csv("All_Feature_CTRD_Data.csv")
-        self.meaningful_raw_data = self.raw_data.drop(['SHA-256',"Cerber"], axis = 1)
+        self.raw_data = pd.read_csv("../GUI/CTRD_Feature_Data/All_Feature_CTRD_Data.csv")
+        self.meaningful_raw_data = self.raw_data.drop(['SHA-256'], axis = 1)
 
     def show_box_plot(self):
         sns.boxplot(orient="h",data=self.meaningful_raw_data)
@@ -121,11 +126,11 @@ class DataVisualizer:
 
     def show_data_profile(self):
         # EDA 리포트 생성 - html로 생성
-        profile = ProfileReport(self.pd_data, title="data profile",minimal=True)
+        profile = ProfileReport(self.meaningful_raw_data, title="data profile",minimal=True)
         print(profile)
         profile.to_file("data_profile_report.html")
-        print(self.pd_data.dtypes)
-        pr = self.pd_data.profile_report()
+        print(self.meaningful_raw_data.dtypes)
+        pr = self.meaningful_raw_data.profile_report()
         print(pr)
 
 
@@ -141,7 +146,7 @@ if __name__ == '__main__':
 
     data_visualizer = DataVisualizer()
     data_visualizer.show_box_plot()
-    data_visualizer.show_dist_plot()
+    #data_visualizer.show_dist_plot()
     # data_visualizer.show_bar_plot()
     # data_visualizer.show_scatter_plot()
     data_visualizer.show_data_profile()
