@@ -1,6 +1,6 @@
 import sys
 from xml.dom.minidom import parseString
-from PyQt5.QtWidgets import *
+import PyQt5.QtWidgets
 from PyQt5 import uic
 from PyQt5.QtCore import *
 import webbrowser
@@ -41,12 +41,12 @@ class Thread(QThread):
             sleep(0.8)
             self._signal.emit(i)
 
-class OptionWindow(QDialog):    
+class OptionWindow(PyQt5.QtWidgets.QDialog):
     def __init__(self, parent):
         super(OptionWindow, self).__init__(parent)  
         self.ui = uic.loadUi(form2, self)         
         self.show()
-        self.setWindowTitle('CTRD v1.4 Detection Report')
+        self.setWindowTitle('CTRD v1.0 Detection Report')
         self.FilePath.setText(filename[0])
         self.FileSize.setText(filesize)
         self.Hash.setText(sha256)
@@ -138,11 +138,11 @@ class OptionWindow(QDialog):
         ws11.merge_cells('C14:J16')
 
         wb.save('CTRD_Report/{0}_CTRD_Report.xlsx' .format(sha256))
-        msgBox = QMessageBox() 
+        msgBox = PyQt5.QtWidgets.QMessageBox()
         msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
         msgBox.information(msgBox,'Notice','CTRD 결과보고서 파일이 생성되었습니다.\n\nCTRD_Report 폴더를 확인해 주시기 바랍니다.', msgBox.Ok)
 
-class MyWindow(QMainWindow, form_class):
+class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('CTRD v1.0')
@@ -154,9 +154,9 @@ class MyWindow(QMainWindow, form_class):
         self.ReportFolderCreate()
         self.Run.clicked.connect(self.Main)
         self.Run.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
-        self.shutdown.clicked.connect(QApplication.instance().quit)
+        self.shutdown.clicked.connect(PyQt5.QtWidgets.QApplication.instance().quit)
         self.minimize.clicked.connect(self.hideWindow)
-        self.github.clicked.connect(lambda: webbrowser.open('https://github.com/not4dog/Cerber-Type-Ransomware-Detection'))
+        self.github.clicked.connect(lambda: webbrowser.open('https://github.com/not4dog/Cerber-Type-Ransomware-CTRD'))
         self.hongiklogo.clicked.connect(lambda: webbrowser.open('https://sejong.hongik.ac.kr/index.do'))
         self.github.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.hongiklogo.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -164,7 +164,7 @@ class MyWindow(QMainWindow, form_class):
         self.shutdown.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
 
     def InitialMethod(self):
-        msgbox = QMessageBox()
+        msgbox = PyQt5.QtWidgets.QMessageBox()
         msgbox.setStyleSheet('QMessageBox {color:black; background:white;}')
         ret = msgbox.question(msgbox,'Question', '초기화 시 기존 분석자료와 결과보고서가 영구적으로 삭제됩니다.\n\n그래도 초기화 하시겠습니까?', msgbox.Yes | msgbox.No)
         if ret == msgbox.Yes:
@@ -198,7 +198,7 @@ class MyWindow(QMainWindow, form_class):
         return
 
     def msg_box(self):
-        msg = QMessageBox()                      
+        msg = PyQt5.QtWidgets.QMessageBox()
         ret = msg.information(msg,'Notice', '실행파일 분석이 완료되었습니다.\n\nOK 버튼을 클릭하시면 CTRD 결과보고서 확인이 가능합니다.', msg.Ok | msg.Cancel)
         if ret == msg.Ok:
            OptionWindow(self)
@@ -270,27 +270,27 @@ class MyWindow(QMainWindow, form_class):
 
     def sshConnect(self):
         global ssh
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         ssh = paramiko.SSHClient()
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         ssh.connect('211.214.61.14',port='2200',username='b793170',password ='20100709')
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
 
     def FileTransper(self):
         global sftp
         sftp =ssh.open_sftp()
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         remotepath = '/home/b793170/Desktop/Scan.exe' 
         localpath  = filepath 
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         sftp.put(localpath, remotepath)
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
 
     def Analysis(self):
         stdin, stdout, stderr = ssh.exec_command('curl -H "Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew" -F file=@/home/b793170/Desktop/Scan.exe http://localhost:8090/tasks/create/file')
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
 
     def Exists(self):
         output = False
@@ -301,26 +301,26 @@ class MyWindow(QMainWindow, form_class):
             output =''.join(stdout.readlines())
             result = output.replace(" ","")
             json.loads(result.lower())
-            QApplication.processEvents()
+            PyQt5.QtWidgets.QApplication.processEvents()
             self.reset()
-            QApplication.processEvents()
+            PyQt5.QtWidgets.QApplication.processEvents()
             if json.loads(result.lower()) != False :
                 break
-            QApplication.processEvents()
+            PyQt5.QtWidgets.QApplication.processEvents()
 
     def FileTransperAndExtract(self):
         remotepath2 = '/home/b793170/.cuckoo/storage/analyses/1/reports/report.json'
         localpath2 = 'CTRD_Feature_Data\{0}_API_Extract.json' .format(sha256)
         sftp.get(remotepath2, localpath2)
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         stdin, stdout, stderr = ssh.exec_command("rm -f /home/b793170/Desktop/Scan.exe")
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         stdin, stdout, stderr = ssh.exec_command('curl -H "Authorization: Bearer pxJLRqiTfxz0PNNhGLdoew" http://localhost:8090/tasks/delete/1')
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         ssh.close()
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         sftp.close()
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
 
         api1 = self.CountAPI("findfirstfile")
         api2 = self.CountAPI("searchpathw")
@@ -357,32 +357,32 @@ class MyWindow(QMainWindow, form_class):
                 "https://www.googleapis.com/auth/drive"]
 
         creds = ServiceAccountCredentials.from_json_keyfile_name(spreadKey, scope)
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
 
         spreadsheet_name = "CTRD_Feature_Data"
         client = gspread.authorize(creds)
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         spreadsheet = client.open(spreadsheet_name)
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
 
         for sheet in spreadsheet.worksheets():
-            QApplication.processEvents()
+            PyQt5.QtWidgets.QApplication.processEvents()
             sheet
 
         new_df = pd.read_csv('CTRD_Feature_Data/All_Feature_CTRD_Data.csv')
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
         val_list = new_df.values.tolist()
         load_list =val_list[0]
 
         sheet.append_row(load_list)
-        QApplication.processEvents()
+        PyQt5.QtWidgets.QApplication.processEvents()
 
     def Main(self):
         global filename, filesize
         global filepath
         global now 
         now = datetime.now()
-        filename = QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/','Executable File (*.exe)') 
+        filename = PyQt5.QtWidgets.QFileDialog.getOpenFileName(self, 'Choose Executable File', 'C:/', 'Executable File (*.exe)')
         filepath = filename[0]
 
         if filename[0] !='' :
@@ -394,7 +394,7 @@ class MyWindow(QMainWindow, form_class):
                pass
 
             else :
-               msgBox = QMessageBox() 
+               msgBox = PyQt5.QtWidgets.QMessageBox()
                msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
                msgBox.warning(msgBox,'Warning','선택한 파일은 실행파일이 아닙니다.\n\n올바른 실행파일을 선택해 주시기 바랍니다.')
                return(print('실행파일이 아닌 파일 선택으로 인한 메인함수 중단'))
@@ -415,13 +415,13 @@ class MyWindow(QMainWindow, form_class):
             self.UploadSpread()
 
         else :
-            msgBox = QMessageBox() 
+            msgBox = PyQt5.QtWidgets.QMessageBox()
             msgBox.setStyleSheet('QMessageBox {color:black; background:white;}')
             msgBox.warning(msgBox,'Warning','분석 대상 파일이 선택되지 않았습니다.\n\n파일을 선택해 주시기 바랍니다.')
             return(print('파일 미 선택으로 인한 메인함수 중단'))
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)
+    app = PyQt5.QtWidgets.QApplication(sys.argv)
     app.setWindowIcon(QIcon('icon.ico'))
     myWindow = MyWindow()
     myWindow.show()

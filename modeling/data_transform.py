@@ -16,7 +16,7 @@ class DataPreprocessor:
         self.load_raw_data()
 
     def load_raw_data(self):
-        self.raw_data = pd.read_csv("ALL_Feature_CTRD_Analysis.csv")
+        self.raw_data = pd.read_csv("EndAnalysis.csv")
 
     def remove_duplicated(self):
         # SHA-256 기준으로 중복 값 제거

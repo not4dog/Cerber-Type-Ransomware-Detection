@@ -1,10 +1,15 @@
 from pathlib import Path
 
 def get_project_root_directory():
-    # 파일 경로 확인 후 경로 복사하여 project_root_directory 변수로 대입
+    # os.path는 경로를 문자열로 다루지만, Pathlib은 경로를 객체로 다룬다
+    # __file__ : 현재 파일, Path : 현재 파일 경로 객체화, resolve : os.path.abspath처럼 절대경로 반환
 
-    data_source_directory = Path(__file__)
-    project_root_directory = data_source_directory.parent.parent.parent
+    # 현재 경로 ( ex) C:\Users\hyunf\PycharmProjects\Cerber-Type-Ransomware-Detection\modeling )
+    data_source_directory = Path(__file__).resolve()
+
+    # 실행중인 스크립트의 부모 디렉토리 -> C:\Users\hyunf\PycharmProjects\Cerber-Type-Ransomware-Detection
+    project_root_directory = data_source_directory.parent.parent
+
     return project_root_directory
 
 def check_file_exist(file_path):
