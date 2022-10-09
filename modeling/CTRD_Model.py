@@ -3,7 +3,7 @@
 import pandas as pd
 import numpy as np  # numpy 1.20 or less
 from pathlib import Path
-from file import get_project_root_directory,check_file_exist
+from filepath import get_project_root_directory,check_file_exist
 
 # pycaret -> 오류시 sckit-learn : 0.23.2로 다운그레이드해야 됨 ( 참고 : 파이썬 3.9버전 이상부터 0.23.2로 변경 안 됨,  3.7,3.8 버전으로 바꿔서 해야 될 듯)
 from pycaret.classification import *
@@ -13,7 +13,7 @@ from pycaret.utils import check_metric
 
 class AutoML:
     def __init__(self):
-        # 경로명 지정해줘야 됨
+        # 경로 폴더 (= 모델링, 분석 데이터 셋 위치 )생성해야 됨
         self.model_path = get_project_root_directory() / Path('modeling')
         self.raw_dataset_path = get_project_root_directory() / Path('All_Feature_CTRD_Analysis.csv')
         self.raw_data = pd.DataFrame()
@@ -62,14 +62,14 @@ class AutoML:
         self.environment = environment
 
     # 하이퍼 파라미터 튜닝
-    def parameter_tuning(model_type: str):
+    def parameter_tuning(self, model_type: str):
         model = create_model(model_type)
 
         tuned_model = tune_model(model, optimize='Accuracy', search_library='optuna', n_iter=10)
         return tuned_model
         
         # 예측결과 출력
-    def evaluation_result(model):
+    def evaluation_result(self,model):
         prediction = predict_model(model)
 
         Accuracy = check_metric(prediction['Cerber'], prediction['Label'], metric='Accuracy')
@@ -85,12 +85,7 @@ class AutoML:
         print('F1: ', F1)
 
         return prediction,Accuracy,Precision,Recall,F1
-    
-    # 모델 저장
-    def save_model(self, model, file_name: str):
-        model_path = self.model_path / Path(file_name)
-        save_model(model, model_path)
-    
+
     # 모델 훈련
     def train_model(self, model_name: str):
         # 데이터 셋 없을 시 경로에서 가져오기
@@ -99,11 +94,12 @@ class AutoML:
             else:
                 self.raw_data = pd.read_csv(self.raw_dataset_path)
 
-            # RandomForest, R
+            # RandomForest, LightGBM, GGradientBoosting
             rf_model = self.parameter_tuning('rf')
             lightgbm_model = self.parameter_tuning('lightgbm')
             gbc_model = self.parameter_tuning('gbc')
 
+            # 3개의 모델을 스태킹
             stacking = stack_models(
                                 estimator_list=[rf_model, lightgbm_model, gbc_model],
                                 meta_model=None,  # 기본적으로 로지스틱 회귀 사용
@@ -123,14 +119,13 @@ class AutoML:
             plot_model(stacking, plot='learning', save=True)
 
             # 최종 모델 결정
-            final = finalize_model(stacking)
+            final_model = finalize_model(stacking)
 
             # 모델 저장
-            self.save_model(final, model_name)
+            save_model(final_model,"final_model")
 
-
-if __name__ == "__main__":
-        ModelMaker = AutoML()
-        ModelMaker.load_data()
-        ModelMaker.setup()
-        ModelMaker.train_model("rf_model")
+# if __name__ == "__main__":
+#         ModelMaker = AutoML()
+#         ModelMaker.load_data()
+#         clf = ModelMaker.setup()
+#         ModelMaker.train_model(clf)
