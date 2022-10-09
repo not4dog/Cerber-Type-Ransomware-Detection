@@ -12,7 +12,7 @@ from scipy.stats import chi2_contingency
 # 데이터 분석
 class DataAnalyzer:
     def __init__(self):
-        self.raw_data = pd.read_csv("../GUI/CTRD_Feature_Data/All_Feature_CTRD_Data.csv")
+        self.raw_data = pd.read_csv("ALL_Feature_CTRD_Analysis.csv")
 
         print('[raw data 정보]')
         print(self.raw_data)
@@ -97,7 +97,7 @@ class DataVisualizer:
         self.load_raw_data()
 
     def load_raw_data(self):
-        self.raw_data = pd.read_csv("../GUI/CTRD_Feature_Data/All_Feature_CTRD_Data.csv")
+        self.raw_data = pd.read_csv("ALL_Feature_CTRD_Analysis.csv")
         self.meaningful_raw_data = self.raw_data.drop(['SHA-256'], axis = 1)
 
     def show_box_plot(self):

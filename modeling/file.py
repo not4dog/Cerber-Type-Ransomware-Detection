@@ -8,9 +8,10 @@ def get_project_root_directory():
     return project_root_directory
 
 def check_file_exist(file_path):
-    # 경로 파일 열기
+    # 경로에 파일 있는가
     try:
         file = open(file_path)
         return True
+
     except FileNotFoundError:
         return False
