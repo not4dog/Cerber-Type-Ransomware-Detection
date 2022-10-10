@@ -1,1 +1,4 @@
 GUI/CTRD_Upload_Spread.json
+GUI/CTRD_ML.py
+modeling/CTRD_Model.py
+GUI/CTRD_Feature_Data/ALL_Feature_CTRD_Analysis.csv
