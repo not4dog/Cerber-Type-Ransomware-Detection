@@ -46,7 +46,7 @@ class OptionWindow(PyQt5.QtWidgets.QDialog):
         super(OptionWindow, self).__init__(parent)  
         self.ui = uic.loadUi(form2, self)         
         self.show()
-        self.setWindowTitle('CTRD v1.0 Detection Report')
+        self.setWindowTitle('CTRD v1.4 Detection Report')
         self.FilePath.setText(filename[0])
         self.FileSize.setText(filesize)
         self.Hash.setText(sha256)
