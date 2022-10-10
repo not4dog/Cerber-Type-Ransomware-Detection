@@ -13,15 +13,20 @@ from pycaret.utils import check_metric
 
 class AutoML:
     def __init__(self):
-        # 경로 폴더 (= 모델링, 분석 데이터 셋 위치 )생성해야 됨
         self.model_path = get_project_root_directory() / Path('modeling')
-        self.raw_dataset_path = get_project_root_directory() / Path('All_Feature_CTRD_Analysis.csv')
+        self.raw_dataset_path = get_project_root_directory() / Path('GUI/CTRD_Feature_Data/End_Analysis_Data.csv')
+
+        # 테스트 할 파일 경로 가져오기
+        self.uploaded_file_location = get_project_root_directory() / Path('')
+
+        # 가져올 데이터 -> 데이터 프레임 형식으로 변환 
+        # 모델 구축 환경 -> 튜플 형식으로 반환
         self.raw_data = pd.DataFrame()
         self.environment = ()
     
     # 데이터 로드
     def load_data(self):
-        raw_data = pd.read_csv("ALL_Feature_CTRD_Analysis.csv")
+        raw_data = pd.read_csv("EndAnalysis.csv")
         self.raw_data = raw_data
         raw_data.to_csv(self.raw_dataset_path)
 
@@ -68,10 +73,13 @@ class AutoML:
         tuned_model = tune_model(model, optimize='Accuracy', search_library='optuna', n_iter=10)
         return tuned_model
         
-        # 예측결과 출력
-    def evaluation_result(self,model):
+    # 예측결과 출력
+    def evaluation_result(self, model):
+
+        # 예측 할 데이터 불러오기
         prediction = predict_model(model)
 
+        print('\nEvaluation Results:')
         Accuracy = check_metric(prediction['Cerber'], prediction['Label'], metric='Accuracy')
         print('Accuracy: ', Accuracy)
 
@@ -84,11 +92,14 @@ class AutoML:
         F1 = check_metric(prediction['Cerber'], prediction['Label'], metric='Recall')
         print('F1: ', F1)
 
-        return prediction,Accuracy,Precision,Recall,F1
+    # 파일 저장
+    def _save_model(self, model, file_name: str):
+        model_path = self.model_path / Path(file_name)
+        save_model(model, model_path)
 
     # 모델 훈련
     def train_model(self, model_name: str):
-        # 데이터 셋 없을 시 경로에서 가져오기
+        # 경로에서 분석 데이터셋 가져오기
             if not check_file_exist(self.raw_dataset_path):
                 self.load_data()
             else:
@@ -109,23 +120,21 @@ class AutoML:
                                 choose_better=True,
                                 optimize="Accuracy",
                                 )
-            # 최종 모델 평가
+            # 모델 평가
             self.evaluation_result(stacking)
 
-            # 모델 평가 분석 -> png 파일로 저장 ( 결과보고서에 쓸 것 )
-            plot_model(stacking, plot='auc', save=True)
-            plot_model(stacking, plot='threshold', save=True)
-            plot_model(stacking, plot='confusion_matrix', save=True)
-            plot_model(stacking, plot='learning', save=True)
-
-            # 최종 모델 결정
-            final_model = finalize_model(stacking)
+            # # 모델 평가 분석 -> png 파일로 저장 ( 결과보고서에 쓸 것 )
+            # plot_model(stacking, plot='auc', save=True)
+            # plot_model(stacking, plot='threshold', save=True)
+            # plot_model(stacking, plot='confusion_matrix', save=True)
+            # plot_model(stacking, plot='learning', save=True)
 
             # 모델 저장
-            save_model(final_model,"final_model")
+            save_model(stacking, "final_model")
 
-# if __name__ == "__main__":
-#         ModelMaker = AutoML()
-#         ModelMaker.load_data()
-#         clf = ModelMaker.setup()
-#         ModelMaker.train_model(clf)
+
+if __name__ == "__main__":
+        ModelMaker = AutoML()
+        ModelMaker.load_data()
+        clf = ModelMaker.setup()
+        ModelMaker.train_model(clf)
