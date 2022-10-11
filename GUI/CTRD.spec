@@ -8,7 +8,9 @@ data = [('GUI.ui', '.'),
         ('objdump.exe', '.'),
         ('phxcrt.dll', '.'),
         ('phxcrt.dll', '.'),
-        ('CTRD_Upload_Spread.json', '.')]
+        ('CTRD_Upload_Spread.json', '.'),
+        ('CTRD_Config_Model.pkl', '.'),
+        ('CTRD_Label_Model.pkl', '.')]
 
 block_cipher = None
 
