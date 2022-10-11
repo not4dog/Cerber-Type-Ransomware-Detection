@@ -145,8 +145,8 @@ if __name__ == '__main__':
     data_analyzer.check_normality_test()
 
     data_visualizer = DataVisualizer()
-    data_visualizer.show_box_plot()
+    #data_visualizer.show_box_plot()
     #data_visualizer.show_dist_plot()
-    # data_visualizer.show_bar_plot()
+    #data_visualizer.show_bar_plot()
     # data_visualizer.show_scatter_plot()
     data_visualizer.show_data_profile()
