@@ -46,7 +46,7 @@ class OptionWindow(PyQt5.QtWidgets.QDialog):
         super(OptionWindow, self).__init__(parent)  
         self.ui = uic.loadUi(form2, self)         
         self.show()
-        self.setWindowTitle('CTRD v1.0 Detection Report')
+        self.setWindowTitle('CTRD v1.4 Detection Report')
         self.FilePath.setText(filename[0])
         self.FileSize.setText(filesize)
         self.Hash.setText(sha256)
@@ -335,7 +335,7 @@ class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
 
         f = open(f'CTRD_Feature_Data\{sha256}_API_Frequency.csv','w', newline='' .format(sha256))
         wr = csv.writer(f)
-        wr.writerow(["FindFirstFile", "SearchPathW", "SetFilePointer", "FindResourceEx", "GetFileAttributesW", "SetFileAttributesW", "SetFilePointerEx", "CryptEncrypt", "CreateThread", "FindResourceExW", "Cerber"])
+        wr.writerow(["FindFirstFile", "SearchPathW", "SetFilePointer", "FindResourceEx", "GetFileAttributesW", "SetFileAttributesW", "SetFilePointerEx", "CryptEncrypt", "CreateThread", "FindResourceExW"])
         wr.writerow([api1, api2, api3, api4, api5, api6, api7, api8, api9, api10])
         f.close()
         return
