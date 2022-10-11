@@ -5,30 +5,25 @@ import numpy as np  # numpy 1.20 or less
 from pathlib import Path
 from filepath import get_project_root_directory,check_file_exist
 
-# pycaret -> 오류시 sckit-learn : 0.23.2로 다운그레이드해야 됨 ( 참고 : 파이썬 3.9버전 이상부터 0.23.2로 변경 안 됨,  3.7,3.8 버전으로 바꿔서 해야 될 듯)
+# pycaret -> 오류시 sckit-learn : 0.23.2로 다운그레이드해야 됨 ( 참고 : 파이썬 3.9버전 이상부터 0.23.2로 변경 안 됨, )
 from pycaret.classification import *
-from pycaret.distributions import UniformDistribution, DiscreteUniformDistribution, CategoricalDistribution, IntUniformDistribution
 from pycaret.utils import check_metric
-
+from sklearn.metrics import log_loss # 모델이 예측한 확률 값을 직접적으로 반영하여 평가
 
 class AutoML:
     def __init__(self):
-        self.model_path = get_project_root_directory() / Path('modeling')
-        self.raw_dataset_path = get_project_root_directory() / Path('GUI/CTRD_Feature_Data/End_Analysis_Data.csv')
-
-        # 테스트 할 파일 경로 가져오기
-        self.uploaded_file_location = get_project_root_directory() / Path('')
-
         # 가져올 데이터 -> 데이터 프레임 형식으로 변환 
         # 모델 구축 환경 -> 튜플 형식으로 반환
         self.raw_data = pd.DataFrame()
         self.environment = ()
-    
+        self.model_path = get_project_root_directory() / Path('modeling')
+        self.raw_dataset_path = get_project_root_directory() / Path('GUI/CTRD_Feature_Data/End_Analysis_Data.csv')
+        self.uploaded_file_location = get_project_root_directory() / Path('GUI/CTRD_Feature_Data/testing.csv')
+
     # 데이터 로드
     def load_data(self):
         raw_data = pd.read_csv("EndAnalysis.csv")
         self.raw_data = raw_data
-        raw_data.to_csv(self.raw_dataset_path)
 
         col_label = self.raw_data['Cerber']
 
@@ -38,45 +33,63 @@ class AutoML:
 
         self.opcode_data= pd.concat([self.opcode_data, col_label], axis=1)
         self.api_data = pd.concat([self.api_data, col_label], axis=1)
-    
+
     # 모델 환경 설정 구축
-    def setup(self):
-
-        # 모든 특성 -> 리스트 변환 ( Pycaret에 적용되도록 리스트 형태로 변환해야 됨)
-        all_features = list(self.raw_data.drop(['SHA-256','Cerber'], axis=1).columns)
-
+    def setup_environment(self):
         # 불필요한 특성 제거
         remove_features = ['SHA-256']
 
+        # 모든 특성 -> 리스트 변환 ( Pycaret에 적용되도록 리스트 형태로 변환해야 됨)
+        all_features = list(self.raw_data.drop(['Cerber'], axis=1).columns)
+
+        # 모델 환경 ( 파이프라인 설정 )
+
+        # 전처리 설명 ( pycaret preprocessing : https://pycaret.gitbook.io/docs/get-started/preprocessing )
+        # 먼저 Min-Max 스케일링으로 특정 범위를 0~1로 정규화 시킨다
+        # 그 다음 비선형변환 방식인 yeo-johnson 사용하여 정규 분포 형식으로 데이터를 고르게 분포
+
+        # 특성 중요도 기반의 유의미하게 사용 할 수 있는 특성 선택을 선택 ( 과적합 ↓ & 정확도 ↑, 룬련시간 ↓ 기대 )
+        # 특징-특징과의 상관성 : 0에 가까울 수록 좋고, 특징-예측(Cerber) 상관성은 : -1 or 1에 가까울 수 록 좋음 (기본값 사용 : 0.8 )
+        # 선택 알고리즘 permutation importance : 모델 예측에 가장 큰 영향을 미치는 Feature 를 파악
+
+
 
         environment = setup(data=self.raw_data,
-                            target="Cerber",
+                            target='Cerber',
                             train_size=0.8,
                             numeric_features=all_features,
                             ignore_features=remove_features,
                             normalize=True,
-                            normalize_method="robust", # 이상치 영향을 최소화를 위해 RobustScaler 스케일링
-                            feature_selection=True, # 특성 중요도 기반의 유의미하게 사용 할 수 있는 특성 선택 ( 기본 알고리즘 : SelectFromModel )
-                            fix_imbalance=True, # 불균형 방지를 위해 SMOTE 적용
-                            fold_strategy="stratifiedkfold",
+                            normalize_method='minmax',
+                            transformation=True,
+                            transformation_method='yeo-johnson',
+                            feature_selection=True,
+                            feature_selection_threshold = 0.8,
+                            feature_selection_method='classic',
+                            feature_interaction = True,
+                            data_split_shuffle=True,
+                            data_split_stratify=True,
+                            fold_strategy='stratifiedkfold',
                             fold=10,
                             fold_shuffle=True,
                             session_id=42,
-                            silent=True # 자동화
-                            )
+                            silent=True)
+
+        # logloss 적용 및 predict_proba로 제출하기 위해 metric 추가
+        add_metric('logloss', 'LogLoss', log_loss, greater_is_better=False, target="pred_proba")
+
         self.environment = environment
 
-    # 하이퍼 파라미터 튜닝
-    def parameter_tuning(self, model_type: str):
-        model = create_model(model_type)
-
-        tuned_model = tune_model(model, optimize='Accuracy', search_library='optuna', n_iter=10)
-        return tuned_model
+    # # 하이퍼 파라미터 튜닝 ( 안해도 될 것 같음 - 정확도가 높음 )
+    # def parameter_tuning(self, model_type: str):
+    #     model = create_model(model_type)
+    #
+    #     tuned_model = tune_model(model, optimize='Accuracy', search_library='optuna', n_iter=10)
+    #     return tuned_model
         
     # 예측결과 출력
     def evaluation_result(self, model):
 
-        # 예측 할 데이터 불러오기
         prediction = predict_model(model)
 
         print('\nEvaluation Results:')
@@ -92,49 +105,52 @@ class AutoML:
         F1 = check_metric(prediction['Cerber'], prediction['Label'], metric='Recall')
         print('F1: ', F1)
 
-    # 파일 저장
-    def _save_model(self, model, file_name: str):
-        model_path = self.model_path / Path(file_name)
-        save_model(model, model_path)
+        return Accuracy,Precision,Recall,F1
+
+    # # 파일 저장
+    # def _save_model(self, model, file_name: str):
+    #     model_path = self.model_path / Path(file_name)
+    #     save_model(model, model_path)
 
     # 모델 훈련
-    def train_model(self, model_name: str):
-        # 경로에서 분석 데이터셋 가져오기
-            if not check_file_exist(self.raw_dataset_path):
-                self.load_data()
-            else:
-                self.raw_data = pd.read_csv(self.raw_dataset_path)
+    def train_model(self):
 
-            # RandomForest, LightGBM, GGradientBoosting
-            rf_model = self.parameter_tuning('rf')
-            lightgbm_model = self.parameter_tuning('lightgbm')
-            gbc_model = self.parameter_tuning('gbc')
+            # 환경 셋팅
+            self.setup_environment()
 
-            # 3개의 모델을 스태킹
+            # 데이터셋에 적합한 상위 4개의 모델 선정 (Gradient Boosting Classifier, 	Light Gradient Boosting Machine, Random Forest Classifier )
+            # svm, ridge는 predict_proba 미지원으로 제외
+            best4 = compare_models(fold=10, sort='logloss', n_select=4, exclude=['svm', 'ridge'])
+
+            # 4개의 모델을 Stacking
             stacking = stack_models(
-                                estimator_list=[rf_model, lightgbm_model, gbc_model],
-                                meta_model=None,  # 기본적으로 로지스틱 회귀 사용
+                                estimator_list = best4,
+                                meta_model=None,  # Logistic Regression 사용
                                 meta_model_fold=10,  # 내부 메타 모델 교차 검증 제어
-                                fold=10,
-                                method="auto",
-                                choose_better=True,
+                                method="predict_proba",
                                 optimize="Accuracy",
+                                probability_threshold=0.5 # 임계값 설정 : 0.5 ( class 1 = predict < 0.5, class 0 = predict > 0.5 )
                                 )
+
             # 모델 평가
             self.evaluation_result(stacking)
 
-            # # 모델 평가 분석 -> png 파일로 저장 ( 결과보고서에 쓸 것 )
-            # plot_model(stacking, plot='auc', save=True)
-            # plot_model(stacking, plot='threshold', save=True)
-            # plot_model(stacking, plot='confusion_matrix', save=True)
-            # plot_model(stacking, plot='learning', save=True)
+            #모델 평가 분석 -> png 파일로 저장 ( 결과보고서에 쓸 것 )
+            plot_model(stacking, plot='auc', save=True)
+            plot_model(stacking, plot='pr', save=True)
+            plot_model(stacking, plot='learning', save=True)
+            plot_model(stacking, plot='threshold', save=True)
+            plot_model(stacking, plot='confusion_matrix', save=True)
+            plot_model(stacking, plot='class_report', save=True)
+
+            # 최종 모델 선정
+            final_model = finalize_model(stacking)
 
             # 모델 저장
-            save_model(stacking, "final_model")
+            save_model(final_model, "CTRD_model")
 
 
 if __name__ == "__main__":
         ModelMaker = AutoML()
         ModelMaker.load_data()
-        clf = ModelMaker.setup()
-        ModelMaker.train_model(clf)
+        ModelMaker.train_model()

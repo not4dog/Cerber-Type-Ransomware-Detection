@@ -1,2 +1,0 @@
-SHA-256,push,mov,call,sub,jmp,add,cmp,test,lea,pop,FindFirstFile,SearchPathW,SetFilePointer,FindResourceEx,GetFileAttributesW,SetFileAttributesW,SetFilePointerEx,CryptEncrypt,CreateThread,FindResourceExW
-0ab18ffb7992f9d484a4d90a10946d3ce8792aaec99219500a398983f749003f,76103,101313,29344,4859,12795,33826,13694,18741,11052,19881,1,0,1,0,1,1,0,0,0,0
