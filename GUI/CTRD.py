@@ -1,5 +1,4 @@
 import sys
-from xml.dom.minidom import parseString
 import PyQt5.QtWidgets
 from PyQt5 import uic
 from PyQt5.QtCore import *
@@ -21,6 +20,7 @@ import gspread
 from openpyxl import Workbook
 from openpyxl.styles import Font, Alignment
 from openpyxl.styles import Border, Side
+from pycaret.classification import *
 
 def resource_path(relative_path):
     base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
@@ -30,7 +30,8 @@ form = resource_path("GUI.ui")
 form_class = uic.loadUiType(form)[0]
 form2 = resource_path("Report.ui")
 spreadKey = resource_path("CTRD_Upload_Spread.json")
-
+model_load = resource_path("CTRD_Label_Model")
+config_load = resource_path("CTRD_Config_Model.pkl")
 class Thread(QThread):
     _signal = pyqtSignal(int)
     def __init__(self):
@@ -50,7 +51,7 @@ class OptionWindow(PyQt5.QtWidgets.QDialog):
         self.FilePath.setText(filename[0])
         self.FileSize.setText(filesize)
         self.Hash.setText(sha256)
-        self.Result.setText("test%")
+        self.Result.setText(MLResult)
         self.SaveCSV.clicked.connect(self.CreateReport)
 
     def CreateReport(self):
@@ -116,7 +117,7 @@ class OptionWindow(PyQt5.QtWidgets.QDialog):
 
         ws9 = wb.active
         ws9.merge_cells('C11:J13')
-        ws9['C11'] = 'test%'
+        ws9['C11'] = MLResult
         ca9 = ws['C11']
         ca9.font = Font(name='Bahnschrift SemiLight SemiConde', size=11)
         ca9.alignment = Alignment(vertical='center')
@@ -348,7 +349,7 @@ class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
         api = 'CTRD_Feature_Data/{0}_API_Frequency.csv' .format(sha256)
 
         dataFrame = pd.concat(map(pd.read_csv, [Opcode, api]), axis=1)
-        dataFrame.to_csv(r'CTRD_Feature_Data/All_Feature_CTRD_Data.csv', index = False)
+        dataFrame.to_csv('CTRD_Feature_Data/{0}_All_Feature_CTRD_Data.csv' .format(sha256), index = False)
 
     def UploadSpread(self):
         scope = ["https://spreadsheets.google.com/feeds",
@@ -376,6 +377,29 @@ class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
 
         sheet.append_row(load_list)
         PyQt5.QtWidgets.QApplication.processEvents()
+
+    def CTRD_ML(self):
+        model = load_model(model_load)
+        upload_data= pd.read_csv('CTRD_Feature_Data/{0}_All_Feature_CTRD_Data.csv' .format(sha256))
+
+        load_config(config_load)
+        prep_pipe = get_config('prep_pipe')
+
+        Score = prep_pipe.predict_proba(upload_data)
+        Convert_Score = Score[0,:]
+        Convert_Benign_Score = round(Convert_Score[0] * 100, 2)
+        Convert_Cerber_Score = round(Convert_Score[1] * 100, 2)
+
+        raw_prediction = predict_model(model, data=upload_data)
+        Label = raw_prediction['Label'][0]
+        global MLResult
+
+        if Convert_Cerber_Score>50.00:
+            os.remove(filepath)
+        else : pass
+
+        MLResult = "This File has an '{0}%' Chance of being CERBER-TYPE RANSOMWARE." .format(Convert_Cerber_Score)
+        return
 
     def Main(self):
         global filename, filesize
@@ -413,6 +437,7 @@ class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
             self.FileTransperAndExtract()
             self.FeatureMerge()
             self.UploadSpread()
+            self.CTRD_ML()
 
         else :
             msgBox = PyQt5.QtWidgets.QMessageBox()

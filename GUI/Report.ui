@@ -389,9 +389,18 @@ color: rgb(255, 255, 255);</string>
      <rect>
       <x>220</x>
       <y>240</y>
-      <width>151</width>
+      <width>671</width>
       <height>21</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Bahnschrift SemiBold SemiConden</family>
+      <pointsize>13</pointsize>
+      <weight>7</weight>
+      <italic>false</italic>
+      <bold>false</bold>
+     </font>
     </property>
     <property name="styleSheet">
      <string notr="true">text-align:left;
