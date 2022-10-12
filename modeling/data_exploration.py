@@ -126,7 +126,7 @@ class DataVisualizer:
 
     def show_data_profile(self):
         # EDA 리포트 생성 - html로 생성
-        profile = ProfileReport(self.meaningful_raw_data, title="data profile",minimal=True)
+        profile = ProfileReport(self.meaningful_raw_data, title="data profile")
         print(profile)
         profile.to_file("data_profile_report.html")
         print(self.meaningful_raw_data.dtypes)

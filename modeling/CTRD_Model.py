@@ -42,17 +42,17 @@ class AutoML:
         # 모든 특성 -> 리스트 변환 ( Pycaret에 적용되도록 리스트 형태로 변환해야 됨)
         all_features = list(self.raw_data.drop(['Cerber'], axis=1).columns)
 
-        # 모델 환경 ( 파이프라인 설정 )
+        # 모델 환경 설정 구축 ( 파이프라인 설정 )
 
         # 전처리 설명 ( pycaret preprocessing : https://pycaret.gitbook.io/docs/get-started/preprocessing )
-        # 먼저 Min-Max 스케일링으로 특정 범위를 0~1로 정규화 시킨다
+        # 먼저 Min-Max 스케일링으로 0~1로 범위를 좁혀 정규화 시킨다
         # 그 다음 비선형변환 방식인 yeo-johnson 사용하여 정규 분포 형식으로 데이터를 고르게 분포
 
         # 특성 중요도 기반의 유의미하게 사용 할 수 있는 특성 선택을 선택 ( 과적합 ↓ & 정확도 ↑, 룬련시간 ↓ 기대 )
         # 특징-특징과의 상관성 : 0에 가까울 수록 좋고, 특징-예측(Cerber) 상관성은 : -1 or 1에 가까울 수 록 좋음 (기본값 사용 : 0.8 )
         # 선택 알고리즘 permutation importance : 모델 예측에 가장 큰 영향을 미치는 Feature 를 파악
 
-
+        # 훈련 데이터 세트가 대상 클래스의 균등하지 않을 경우 (Oversampling) -> SMOTE로 방지 ( bengin : 443,  Cerber : 389)
 
         environment = setup(data=self.raw_data,
                             target='Cerber',
@@ -60,13 +60,11 @@ class AutoML:
                             numeric_features=all_features,
                             ignore_features=remove_features,
                             normalize=True,
-                            normalize_method='minmax',
-                            transformation=True,
-                            transformation_method='yeo-johnson',
+                            normalize_method='robust',
+                            feature_interaction=True,
                             feature_selection=True,
-                            feature_selection_threshold = 0.8,
+                            feature_selection_threshold=0.9,
                             feature_selection_method='classic',
-                            feature_interaction = True,
                             data_split_shuffle=True,
                             data_split_stratify=True,
                             fold_strategy='stratifiedkfold',
@@ -118,36 +116,37 @@ class AutoML:
             # 환경 셋팅
             self.setup_environment()
 
-            # 데이터셋에 적합한 상위 4개의 모델 선정 (Gradient Boosting Classifier, 	Light Gradient Boosting Machine, Random Forest Classifier )
-            # svm, ridge는 predict_proba 미지원으로 제외
-            best4 = compare_models(fold=10, sort='logloss', n_select=4, exclude=['svm', 'ridge'])
+            # 모델 추천  ( LogLoss가 낮은 모델을 선정해야됨 - gbc,rf,et )
+            # svm, ridge는 predict_proba 미지원으로 제외 & lightgbm은 스태킹 모델에서 사용되므로 제외
+            best3 = compare_models(fold=10, sort='logloss', n_select=3, exclude=['svm', 'ridge'])
 
             # 4개의 모델을 Stacking
             stacking = stack_models(
-                                estimator_list = best4,
-                                meta_model=None,  # Logistic Regression 사용
+                                estimator_list = best3,
+                                meta_model=None,
                                 meta_model_fold=10,  # 내부 메타 모델 교차 검증 제어
                                 method="predict_proba",
-                                optimize="Accuracy",
-                                probability_threshold=0.5 # 임계값 설정 : 0.5 ( class 1 = predict < 0.5, class 0 = predict > 0.5 )
+                                choose_better=True,
+                                optimize="logloss"
                                 )
 
             # 모델 평가
             self.evaluation_result(stacking)
 
             #모델 평가 분석 -> png 파일로 저장 ( 결과보고서에 쓸 것 )
-            plot_model(stacking, plot='auc', save=True)
-            plot_model(stacking, plot='pr', save=True)
-            plot_model(stacking, plot='learning', save=True)
-            plot_model(stacking, plot='threshold', save=True)
-            plot_model(stacking, plot='confusion_matrix', save=True)
-            plot_model(stacking, plot='class_report', save=True)
+            # plot_model(stacking, plot='auc', save=True)
+            # plot_model(stacking, plot='pr', save=True)
+            # plot_model(stacking, plot='learning', save=True)
+            # plot_model(stacking, plot='threshold', save=True)
+            # plot_model(stacking, plot='confusion_matrix', save=True)
+            # plot_model(stacking, plot='class_report', save=True)
 
             # 최종 모델 선정
             final_model = finalize_model(stacking)
 
             # 모델 저장
             save_model(final_model, "CTRD_model")
+            save_config("CTRD_config.pkl")
 
 
 if __name__ == "__main__":
