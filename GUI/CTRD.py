@@ -39,7 +39,7 @@ class Thread(QThread):
     
     def run(self):
         for i in range(101):
-            sleep(0.8)
+            sleep(2)
             self._signal.emit(i)
 
 class OptionWindow(PyQt5.QtWidgets.QDialog):
@@ -157,7 +157,7 @@ class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
         self.Run.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.shutdown.clicked.connect(PyQt5.QtWidgets.QApplication.instance().quit)
         self.minimize.clicked.connect(self.hideWindow)
-        self.github.clicked.connect(lambda: webbrowser.open('https://github.com/not4dog/Cerber-Type-Ransomware-CTRD'))
+        self.github.clicked.connect(lambda: webbrowser.open('https://github.com/not4dog/Cerber-Type-Ransomware-Detection'))
         self.hongiklogo.clicked.connect(lambda: webbrowser.open('https://sejong.hongik.ac.kr/index.do'))
         self.github.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
         self.hongiklogo.setCursor(QtGui.QCursor(QtCore.Qt.PointingHandCursor))
@@ -370,7 +370,7 @@ class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
             PyQt5.QtWidgets.QApplication.processEvents()
             sheet
 
-        new_df = pd.read_csv('CTRD_Feature_Data/All_Feature_CTRD_Data.csv')
+        new_df = pd.read_csv('CTRD_Feature_Data/{0}_All_Feature_CTRD_Data.csv'.format(sha256))
         PyQt5.QtWidgets.QApplication.processEvents()
         val_list = new_df.values.tolist()
         load_list =val_list[0]
@@ -390,15 +390,13 @@ class MyWindow(PyQt5.QtWidgets.QMainWindow, form_class):
         Convert_Benign_Score = round(Convert_Score[0] * 100, 2)
         Convert_Cerber_Score = round(Convert_Score[1] * 100, 2)
 
-        raw_prediction = predict_model(model, data=upload_data)
-        Label = raw_prediction['Label'][0]
         global MLResult
 
-        if Convert_Cerber_Score>50.00:
+        if Convert_Cerber_Score > 50.00 :
             os.remove(filepath)
         else : pass
 
-        MLResult = "This File has an '{0}%' Chance of being CERBER-TYPE RANSOMWARE." .format(Convert_Cerber_Score)
+        MLResult = "This File has an {0}% Chance of being CERBER-TYPE RANSOMWARE." .format(Convert_Cerber_Score)
         return
 
     def Main(self):
