@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import scipy.stats as stats
 
 from pandas_profiling import ProfileReport
 from scipy.stats import probplot
@@ -61,6 +62,7 @@ class DataAnalyzer:
         sns.heatmap(corr,
                     cmap='RdYlBu_r',
                     annot=True,  # 실제 값을 표시한다
+                    mask=mask,  # 표시하지 않을 마스크 부분을 지정한다
                     linewidths=.5,  # 경계면 실선으로 구분하기
                     cbar_kws={"shrink": .5},  # 컬러바 크기 절반으로 줄이기
                     vmin=-1, vmax=1  # 컬러바 범위 -1 ~ 1
@@ -76,17 +78,17 @@ class DataAnalyzer:
         print(corr_matrix["Cerber"].sort_values(ascending=False))
         print()
 
-
     def check_normality_test(self):
-        # 데이터셋이 어떤식으로 정규분포가 이뤄졌는지 확인하여 스케일링을 결정
-        # 표본수(n)이므,로 2000미만 데이터셋에 적합한 정규성 검정을 위해 Shaprio-Wiliks
+        # 정규성 검정이란? : https://bioinformaticsandme.tistory.com/37
+        # 데이터셋이 어떤식으로 정규분포가 이뤄졌는지 확인하여 스케일링 결정
+        # 표본수(n)이므로 2000미만 데이터셋에 적합한 정규성 검정을 위해 Shaprio-Wiliks
         # 귀무가설 H0 : 데이터셋이 정규분포를 따른다
         # 대립가설 H1 : 데이터셋이 정규분포를 따르지 X
         
         print('[feature 별 정규성 검정]')
         for col, item in self.meaningful_raw_data.iteritems():
             print()
-            print(shapiro(self.meaningful_raw_data[col]) )
+            print(stats.shapiro(self.meaningful_raw_data[col]))
 
         print()
         # 결과 : P값이 0.05(일반적인 귀무가설 검정 임계치 수준)보다 높은 부분이 보이므로 모든 feature가 정규분포를 따르지 않음
@@ -124,9 +126,15 @@ class DataVisualizer:
         plt.savefig('Dataset_distribution Plot')
         plt.show()
 
+    def show_probplot(self):
+        sns.stripplot(self.meaningful_raw_data)
+        plt.title("Dataset Q-Q Plot")
+        plt.savefig('Dataset Q-Q Plot')
+        plt.show()
+
     def show_data_profile(self):
         # EDA 리포트 생성 - html로 생성
-        profile = ProfileReport(self.meaningful_raw_data, title="data profile")
+        profile = ProfileReport(self.meaningful_raw_data, minimal=True, title="data profile")
         print(profile)
         profile.to_file("data_profile_report.html")
         print(self.meaningful_raw_data.dtypes)
@@ -148,5 +156,6 @@ if __name__ == '__main__':
     #data_visualizer.show_box_plot()
     #data_visualizer.show_dist_plot()
     #data_visualizer.show_bar_plot()
-    # data_visualizer.show_scatter_plot()
-    data_visualizer.show_data_profile()
+    #data_visualizer.show_scatter_plot()
+    data_visualizer.show_probplot()
+    #data_visualizer.show_data_profile()

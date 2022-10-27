@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import  StandardScaler, RobustScaler, MinMaxScaler, MaxAbsScaler, Normalizer
+from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler, MaxAbsScaler, Normalizer, QuantileTransformer, PowerTransformer
 
 
 class DataPreprocessor:
@@ -25,7 +25,7 @@ class DataPreprocessor:
 
         self.pd_data = self.raw_data.drop_duplicates(['SHA-256'])
 
-    # 불필요한 특징 제거 ( SHA-256, 상관관계로 발견한 의미 없는 feature 제거
+    # 불필요한 특징 제거 ( SHA-256(unique), 상관관계로 발견한 의미 없는 feature 제거
     def remove_unnecessary_features(self):
         self.pd_data = self.raw_data.drop(['SHA-256'], axis = 1)
 
@@ -83,12 +83,16 @@ class DataPreprocessor:
         standard = StandardScaler()
         robust = RobustScaler()
         normal = Normalizer()
+        quantile = QuantileTransformer(n_quantiles=1000, output_distribution='normal')
+        power = PowerTransformer()
 
         minmax.fit(self.pd_data)
         maxabs.fit(self.pd_data)
         standard.fit(self.pd_data)
         robust.fit(self.pd_data)
         normal.fit(self.pd_data)
+        quantile.fit(self.pd_data)
+        power.fit(self.pd_data)
 
 
         self.pd_scaled_data_list.append(minmax.transform(self.pd_data))
@@ -100,7 +104,7 @@ class DataPreprocessor:
     def make_scaled_data(self):
 
         # 정규화 -  서로 다른 피처의 크기를 통일하기 위해 크기를 변환
-        scaler = RobustScaler()
+        scaler = QuantileTransformer()
         scaler.fit(self.pd_data)
 
         self.pd_scaled_data = scaler.transform(self.pd_data)
@@ -119,23 +123,20 @@ class DataPreprocessor:
 
         return self.pd_scaled_data_list
 
-# 모델 성능 안 좋을 시 특징 선택법을 이용
-# 모델을 돌릴 때 쓸모 없는 변수들을 제거함으로써모델의 속도 개선, 오버피팅 방지 등의 효과를 얻기 위해 사용하는 방법.
-# 1. Wrapper method : 모델링 돌리면서 변수 채택(주로 사용) && 2. Filter Method : 전처리단에서 통계기법 사용하여 변수 채택 &&3. Embedded method : 라쏘, 릿지, 엘라스틱넷 등 내장함수 사용하여 변수 채택
-# 출처: https://dyddl1993.tistory.com/18 [새우위키:티스토리]
 
-# class FeatureEngineer:
-#     def __init__(self):
-#         self.pd_data = None  # 정제중인 데이터
-#         self.load_raw_data()
-#     def load_raw_data(self):
-#         self.raw_data = pd.read_csv("All_Feature_CTRD_Data.csv")
+class FeatureEngineer:
+    def __init__(self):
+        self.pd_data = None  # 정제중인 데이터
+        self.load_raw_data()
+    def load_raw_data(self):
+        self.raw_data = pd.read_csv("All_Feature_CTRD_Data.csv")
 
 if __name__ == "__main__":
     data_preprocessor = DataPreprocessor()
     data_preprocessor.load_raw_data()
     data_preprocessor.remove_duplicated()
     data_preprocessor.remove_unnecessary_features()
+
     #data_preprocessor.address_missing_value()
     #data_preprocessor.remove_outlier_based_std()
     #data_preprocessor.remove_outlier_based_IQR()
